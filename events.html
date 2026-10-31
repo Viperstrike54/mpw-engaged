@@ -27,8 +27,52 @@
     <p>SHOWS & MATCH CARDS</p>
   </header>
   <main>
-    <h2>Event Hub</h2>
-    <p>Your MPW events will appear here.</p>
+    <h2>Event Hub</h2><div id="event-list">Loading events...</div>
   </main>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA",
+    authDomain: "mpw-engaged.firebaseapp.com",
+    projectId: "mpw-engaged",
+    storageBucket: "mpw-engaged.firebasestorage.app",
+    messagingSenderId: "133272625859",
+    appId: "1:133272625859:web:d1e09eaf1b4613172a7876"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function loadEvents() {
+    const eventList = document.getElementById("event-list");
+    try {
+      const publishedEvents = query(
+        collection(db, "events"),
+        where("publicationStatus", "==", "published")
+      );
+      const snapshot = await getDocs(publishedEvents);
+      eventList.textContent = "";
+      if (snapshot.empty) {
+        eventList.textContent = "No published events yet.";
+        return;
+      }
+      snapshot.forEach(doc => {
+        const event = doc.data();
+        const card = document.createElement("article");
+        const heading = document.createElement("h3");
+        heading.textContent = event.title || "Untitled event";
+        card.appendChild(heading);
+        eventList.appendChild(card);
+      });
+    } catch (error) {
+      console.error("Event loading failed:", error);
+      eventList.textContent = "Unable to load events.";
+    }
+  }
+
+  loadEvents();
+</script>
 </body>
 </html>

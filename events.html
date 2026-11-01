@@ -28,7 +28,15 @@
   </header>
   <main>
     <h2>Event Hub</h2><div id="event-list">Loading events...</div>
-
+<section id="event-admin" hidden>
+  <h2>Create Event</h2>
+  <input id="event-title" type="text" placeholder="Event Name" />
+  <input id="event-type" type="text" placeholder="Event Type (Engage, PLE, etc.)" />
+  <input id="event-date" type="date" />
+  <input id="event-location" type="text" placeholder="Event Location" />
+<textarea id="event-description" placeholder="Event Description"></textarea>
+<button id="create-event-btn" type="button">Create Event</button>
+</section>
   </main>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";

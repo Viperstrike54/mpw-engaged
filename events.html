@@ -93,10 +93,44 @@ const auth = getAuth(app);
     }
   }
 
+async function loadDrafts() {
+  const draftList = document.getElementById("draft-list");
+
+const draftsQuery = query(
+  collection(db, "events"),
+  where("publicationStatus", "==", "draft")
+);
+const snapshot = await getDocs(draftsQuery);
+  
+draftList.textContent = "";
+
+if (snapshot.empty) {
+  draftList.textContent = "No event drafts yet.";
+  return;
+}
+
+
+snapshot.forEach(doc => {
+  const event = doc.data();
+  const card = document.createElement("article");
+  const heading = document.createElement("h3");
+
+  heading.textContent = event.title || "Untitled Event";
+  card.appendChild(heading);
+  draftList.appendChild(card);
+});
+
+}
+
   
 onAuthStateChanged(auth, async (user) => {
   const adminSection = document.getElementById("event-admin");
+ 
+const draftsSection = document.getElementById("event-drafts");
+
   adminSection.hidden = true;
+
+draftsSection.hidden = true;
 
   if (!user) return;
 
@@ -106,6 +140,13 @@ onAuthStateChanged(auth, async (user) => {
       !(profile.exists() &&
         profile.data().active === true &&
         profile.data().role === "admin");
+  
+draftsSection.hidden = adminSection.hidden;
+
+if (!draftsSection.hidden) {
+  await loadDrafts();
+}
+
   } catch (error) {
     console.error("Admin verification failed:", error);
   }

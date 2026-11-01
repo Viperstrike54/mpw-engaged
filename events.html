@@ -33,7 +33,14 @@
   <h2>My Event Drafts</h2>
   <div id="draft-list">Loading drafts...</div>
 </section>
-
+<section id="event-details" hidden>
+  <h2 id="selected-event-title">Event Management</h2>
+  <p id="selected-event-info"></p>
+  <h3>Match Card</h3>
+  <div id="selected-event-matches">
+    No matches added yet.
+  </div>
+</section>
     <section id="event-admin" hidden>
   <h2>Create Event</h2>
   <input id="event-title" type="text" placeholder="Event Name" />
@@ -119,7 +126,13 @@ snapshot.forEach(doc => {
   heading.style.cursor = "pointer";
 heading.style.color = "#c8a85b";
 heading.addEventListener("click", () => {
-  alert("Opening event: " + event.title);
+  document.getElementById("event-details").hidden = false;
+
+  document.getElementById("selected-event-title").textContent =
+    event.title || "Untitled Event";
+
+  document.getElementById("selected-event-info").textContent =
+    `${event.type || "Event"} | ${event.date || "Date TBD"} | ${event.location || "Location TBD"}`;
 });
   card.appendChild(heading);
   draftList.appendChild(card);

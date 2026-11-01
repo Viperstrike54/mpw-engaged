@@ -106,6 +106,43 @@ let selectedEventId = null;
     }
   }
 
+async function loadMatches(eventId) {
+  const matchList = document.getElementById("selected-event-matches");
+  matchList.textContent = "Loading matches...";
+
+  try {
+    const matchesQuery = query(
+      collection(db, "events", eventId, "matches")
+    );
+
+    const snapshot = await getDocs(matchesQuery);
+    matchList.textContent = "";
+
+    if (snapshot.empty) {
+      matchList.textContent = "No matches added yet.";
+      return;
+    }
+
+    snapshot.forEach(matchDoc => {
+      const match = matchDoc.data();
+      const card = document.createElement("article");
+      const heading = document.createElement("h4");
+
+      heading.textContent = match.name || "Unnamed Match";
+      card.appendChild(heading);
+
+      const type = document.createElement("p");
+      type.textContent = match.type || "Standard Match";
+      card.appendChild(type);
+
+      matchList.appendChild(card);
+    });
+  } catch (error) {
+    console.error("Match loading failed:", error);
+    matchList.textContent = "Unable to load matches.";
+  }
+}
+
 async function loadDrafts() {
   const draftList = document.getElementById("draft-list");
 
@@ -140,6 +177,7 @@ selectedEventId = doc.id;
 
   document.getElementById("selected-event-info").textContent =
     `${event.type || "Event"} | ${event.date || "Date TBD"} | ${event.location || "Location TBD"}`;
+  loadMatches(selectedEventId);
 });
   card.appendChild(heading);
   draftList.appendChild(card);

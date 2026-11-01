@@ -177,7 +177,33 @@ if (!draftsSection.hidden) {
   }
 });
 
+document.getElementById("add-match-btn").addEventListener("click", async () => {
+  if (!selectedEventId) {
+    alert("Please select an event first.");
+    return;
+  }
 
+  const name = document.getElementById("match-name").value.trim();
+  const type = document.getElementById("match-type").value.trim();
+
+  if (!name || !type) {
+    alert("Please enter a match name and match type.");
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "events", selectedEventId, "matches"), {
+      name,
+      type,
+      createdAt: new Date().toISOString()
+    });
+
+    alert("Match added successfully!");
+  } catch (error) {
+    console.error("Match booking failed:", error);
+    alert("Unable to add match: " + error.message);
+  }
+});
   
 document.getElementById("create-event-btn").addEventListener("click", async () => {
   const title = document.getElementById("event-title").value.trim();

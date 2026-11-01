@@ -116,6 +116,11 @@ snapshot.forEach(doc => {
   const heading = document.createElement("h3");
 
   heading.textContent = event.title || "Untitled Event";
+  heading.style.cursor = "pointer";
+heading.style.color = "#c8a85b";
+heading.addEventListener("click", () => {
+  alert("Opening event: " + event.title);
+});
   card.appendChild(heading);
   draftList.appendChild(card);
 });

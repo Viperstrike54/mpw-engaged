@@ -105,6 +105,50 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+
+  
+document.getElementById("create-event-btn").addEventListener("click", async () => {
+  const title = document.getElementById("event-title").value.trim();
+  const type = document.getElementById("event-type").value.trim();
+  const date = document.getElementById("event-date").value;
+  const location = document.getElementById("event-location").value.trim();
+  const description = document.getElementById("event-description").value.trim();
+
+  if (!title || !type || !date) {
+    alert("Please enter an event name, type, and date.");
+    return;
+  }
+
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please sign in before creating an event.");
+    return;
+  }
+
+  try {
+    const profile = await getDoc(doc(db, "users", user.uid));
+    if (!profile.exists() || profile.data().active !== true || profile.data().role !== "admin") {
+      alert("Only an active admin can create events.");
+      return;
+    }
+
+    await addDoc(collection(db, "events"), {
+      title,
+      type,
+      date,
+      location,
+      description,
+      authorUid: user.uid,
+      publicationStatus: "draft"
+    });
+
+    alert("Event draft created successfully!");
+  } catch (error) {
+    console.error("Event creation failed:", error);
+    alert("Unable to create event: " + error.message);
+  }
+});
+
   loadEvents();
 </script>
 </body>

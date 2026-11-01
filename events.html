@@ -73,14 +73,7 @@
     }
   }
 
-  document.getElementById("test-event-btn").addEventListener("click", async () => {
-  try {
-    const snapshot = await getDocs(collection(db, "events"));
-    alert("Firebase connected! Found " + snapshot.size + " event(s).");
-  } catch (error) {
-    alert("Connection test failed: " + error.message);
-  }
-});
+  
   loadEvents();
 </script>
 </body>

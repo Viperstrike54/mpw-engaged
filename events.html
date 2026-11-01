@@ -78,7 +78,7 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
   const db = getFirestore(app);
 
 const auth = getAuth(app);
-
+let selectedEventId = null;
   async function loadEvents() {
     const eventList = document.getElementById("event-list");
     try {
@@ -132,6 +132,7 @@ snapshot.forEach(doc => {
   heading.style.cursor = "pointer";
 heading.style.color = "#c8a85b";
 heading.addEventListener("click", () => {
+selectedEventId = doc.id;
   document.getElementById("event-details").hidden = false;
 
   document.getElementById("selected-event-title").textContent =

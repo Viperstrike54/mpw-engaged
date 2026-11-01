@@ -40,7 +40,9 @@
   </main>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+import { getFirestore, collection, query, where, getDocs, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
 
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
@@ -86,6 +88,23 @@ const auth = getAuth(app);
   }
 
   
+onAuthStateChanged(auth, async (user) => {
+  const adminSection = document.getElementById("event-admin");
+  adminSection.hidden = true;
+
+  if (!user) return;
+
+  try {
+    const profile = await getDoc(doc(db, "users", user.uid));
+    adminSection.hidden =
+      !(profile.exists() &&
+        profile.data().active === true &&
+        profile.data().role === "admin");
+  } catch (error) {
+    console.error("Admin verification failed:", error);
+  }
+});
+
   loadEvents();
 </script>
 </body>

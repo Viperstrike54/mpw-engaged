@@ -148,6 +148,15 @@ deleteButton.addEventListener("click", async () => {
   }
 });
 
+const editButton = document.createElement("button");
+editButton.textContent = "Edit Match";
+
+editButton.addEventListener("click", () => {
+  alert("Edit Match clicked!");
+});
+
+card.appendChild(editButton);
+
 card.appendChild(deleteButton);
       matchList.appendChild(card);
     });

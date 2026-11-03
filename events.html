@@ -60,7 +60,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
-import { getFirestore, collection, query, where, getDocs, addDoc, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, doc, getDoc, deleteDoc , updateDoc} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -151,8 +151,30 @@ deleteButton.addEventListener("click", async () => {
 const editButton = document.createElement("button");
 editButton.textContent = "Edit Match";
 
-editButton.addEventListener("click", () => {
-  alert("Edit Match clicked!");
+editButton.addEventListener("click", async () => {
+const newName = prompt("Edit Match Name:", match.name);
+const newType = prompt("Edit Match Type:", match.type);
+if (newName === null || newType === null) return;
+
+if (!newName.trim() || !newType.trim()) {
+  alert("Match name and type cannot be empty.");
+  return;
+}
+
+try {
+  await updateDoc(
+    doc(db, "events", eventId, "matches", matchDoc.id),
+    {
+      name: newName.trim(),
+      type: newType.trim()
+    }
+  );
+
+  await loadMatches(eventId);
+  alert("Match updated successfully!");
+} catch (error) {
+  alert("Unable to update match: " + error.message);
+}
 });
 
 card.appendChild(editButton);

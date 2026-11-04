@@ -44,6 +44,7 @@
 <div id="match-booking">
   <input id="match-name" type="text" placeholder="Match Name" />
   <input id="match-type" type="text" placeholder="Match Type" />
+  <input id="match-order" type="number" min="1" placeholder="Match Order (1 = Opener)" />
   <button id="add-match-btn" type="button">Add Match</button>
 </div>
 </section>
@@ -116,6 +117,9 @@ async function loadMatches(eventId) {
     );
 
     const snapshot = await getDocs(matchesQuery);
+    const sortedMatches = snapshot.docs.sort((a, b) => {
+  return (Number(b.data().order) || 0) - (Number(a.data().order) || 0);
+});
     matchList.textContent = "";
 
     if (snapshot.empty) {
@@ -123,8 +127,8 @@ async function loadMatches(eventId) {
       return;
     }
 
-    snapshot.forEach(matchDoc => {
-      const match = matchDoc.data();
+sortedMatches.forEach(matchDoc => {      
+  const match = matchDoc.data();
       const card = document.createElement("article");
       const heading = document.createElement("h4");
 
@@ -278,6 +282,7 @@ document.getElementById("add-match-btn").addEventListener("click", async () => {
     await addDoc(collection(db, "events", selectedEventId, "matches"), {
       name,
       type,
+      order: Number(document.getElementById("match-order").value),
       createdAt: new Date().toISOString()
     });
 

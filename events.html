@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +19,11 @@
       text-align: center;
     }
     h1 { color: #c8a85b; }
-    main { padding: 24px; max-width: 1000px; margin: auto; }
+    main {
+      padding: 24px;
+      max-width: 1000px;
+      margin: auto;
+    }
   </style>
 </head>
 <body>
@@ -26,316 +31,467 @@
     <h1>MPW ENGAGED</h1>
     <p>SHOWS & MATCH CARDS</p>
   </header>
+
   <main>
-    <h2>Event Hub</h2><div id="event-list">Loading events...</div>
+    <h2>Event Hub</h2>
+    <div id="event-list">Loading events...</div>
 
-<section id="event-drafts" hidden>
-  <h2>My Event Drafts</h2>
-  <div id="draft-list">Loading drafts...</div>
-</section>
-<section id="event-details" hidden>
-  <h2 id="selected-event-title">Event Management</h2>
-  <p id="selected-event-info"></p>
-  <h3>Match Card</h3>
-  <div id="selected-event-matches">
-    No matches added yet.
-  </div>
-<h3>Book a Match</h3>
-<div id="match-booking">
-  <input id="match-name" type="text" placeholder="Match Name" />
-  <input id="match-type" type="text" placeholder="Match Type" />
-  <input id="match-order" type="number" min="1" placeholder="Match Order (1 = Opener)" />
-  <button id="add-match-btn" type="button">Add Match</button>
-</div>
-</section>
+    <section id="event-drafts" hidden>
+      <h2>My Event Drafts</h2>
+      <div id="draft-list">Loading drafts...</div>
+    </section>
+
+    <section id="event-details" hidden>
+      <h2 id="selected-event-title">Event Management</h2>
+      <p id="selected-event-info"></p>
+
+      <h3>Match Card</h3>
+      <div id="selected-event-matches">
+        No matches added yet.
+      </div>
+
+      <h3>Book a Match</h3>
+      <div id="match-booking">
+        <input id="match-name" type="text" placeholder="Match Name" />
+        <input id="match-type" type="text" placeholder="Match Type" />
+        <input id="match-order" type="number" min="1"
+          placeholder="Match Order (1 = Opener)" />
+        <button id="add-match-btn" type="button">Add Match</button>
+      </div>
+    </section>
+
     <section id="event-admin" hidden>
-  <h2>Create Event</h2>
-  <input id="event-title" type="text" placeholder="Event Name" />
-  <input id="event-type" type="text" placeholder="Event Type (Engage, PLE, etc.)" />
-  <input id="event-date" type="date" />
-  <input id="event-location" type="text" placeholder="Event Location" />
-<textarea id="event-description" placeholder="Event Description"></textarea>
-<button id="create-event-btn" type="button">Create Event</button>
-</section>
+      <h2>Create Event</h2>
+      <input id="event-title" type="text" placeholder="Event Name" />
+      <input id="event-type" type="text"
+        placeholder="Event Type (Engage, PLE, etc.)" />
+      <input id="event-date" type="date" />
+      <input id="event-location" type="text"
+        placeholder="Event Location" />
+      <textarea id="event-description"
+        placeholder="Event Description"></textarea>
+      <button id="create-event-btn" type="button">Create Event</button>
+    </section>
   </main>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
-import { getFirestore, collection, query, where, getDocs, addDoc, doc, getDoc, deleteDoc , updateDoc} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      addDoc,
+      doc,
+      getDoc,
+      deleteDoc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA",
-    authDomain: "mpw-engaged.firebaseapp.com",
-    projectId: "mpw-engaged",
-    storageBucket: "mpw-engaged.firebasestorage.app",
-    messagingSenderId: "133272625859",
-    appId: "1:133272625859:web:d1e09eaf1b4613172a7876"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA",
+      authDomain: "mpw-engaged.firebaseapp.com",
+      projectId: "mpw-engaged",
+      storageBucket: "mpw-engaged.firebasestorage.app",
+      messagingSenderId: "133272625859",
+      appId: "1:133272625859:web:d1e09eaf1b4613172a7876"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-const auth = getAuth(app);
-let selectedEventId = null;
-  async function loadEvents() {
-    const eventList = document.getElementById("event-list");
-    try {
-      const publishedEvents = query(
-        collection(db, "events"),
-        where("publicationStatus", "==", "published")
+    let selectedEventId = null;
+
+    async function loadEvents() {
+      const eventList = document.getElementById("event-list");
+
+      try {
+        const publishedEvents = query(
+          collection(db, "events"),
+          where("publicationStatus", "==", "published")
+        );
+
+        const snapshot = await getDocs(publishedEvents);
+        eventList.textContent = "";
+
+        if (snapshot.empty) {
+          eventList.textContent = "No published events yet.";
+          return;
+        }
+
+        snapshot.forEach(eventDoc => {
+          const event = eventDoc.data();
+          const card = document.createElement("article");
+          const heading = document.createElement("h3");
+
+          heading.textContent = event.title || "Untitled event";
+          card.appendChild(heading);
+          eventList.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Event loading failed:", error);
+        eventList.textContent = "Unable to load events.";
+      }
+    }
+
+    async function loadMatches(eventId) {
+      const matchList = document.getElementById(
+        "selected-event-matches"
       );
-      const snapshot = await getDocs(publishedEvents);
-      eventList.textContent = "";
+
+      matchList.textContent = "Loading matches...";
+
+      try {
+        const matchesQuery = query(
+          collection(db, "events", eventId, "matches")
+        );
+
+        const snapshot = await getDocs(matchesQuery);
+
+        const sortedMatches = [...snapshot.docs].sort((a, b) => {
+          const aOrder = Number(a.data().order) || 0;
+          const bOrder = Number(b.data().order) || 0;
+          return bOrder - aOrder;
+        });
+
+        matchList.textContent = "";
+
+        if (snapshot.empty) {
+          matchList.textContent = "No matches added yet.";
+          return;
+        }
+
+        sortedMatches.forEach(matchDoc => {
+          const match = matchDoc.data();
+          const card = document.createElement("article");
+
+          const heading = document.createElement("h4");
+          heading.textContent = match.name || "Unnamed Match";
+          card.appendChild(heading);
+
+          const type = document.createElement("p");
+          type.textContent = match.type || "Standard Match";
+          card.appendChild(type);
+
+          const order = document.createElement("p");
+          const savedOrder = Number(match.order);
+
+          order.textContent =
+            Number.isInteger(savedOrder) && savedOrder >= 1
+              ? "Match " + savedOrder
+              : "Match order not assigned";
+
+          order.style.color = "#c8a85b";
+          card.appendChild(order);
+
+          const editButton = document.createElement("button");
+          editButton.textContent = "Edit Match";
+
+          editButton.addEventListener("click", async () => {
+            const newName = prompt(
+              "Edit Match Name:",
+              match.name || ""
+            );
+
+            if (newName === null) return;
+
+            const newType = prompt(
+              "Edit Match Type:",
+              match.type || ""
+            );
+
+            if (newType === null) return;
+
+            const currentOrder =
+              Number.isInteger(savedOrder) && savedOrder >= 1
+                ? String(savedOrder)
+                : "";
+
+            const newOrder = prompt(
+              "Edit Match Order (1 = Opener, highest = Main Event):",
+              currentOrder
+            );
+
+            if (newOrder === null) return;
+
+            if (!newName.trim() || !newType.trim()) {
+              alert("Match name and type cannot be empty.");
+              return;
+            }
+
+            const orderNumber = Number(newOrder.trim());
+
+            if (
+              newOrder.trim() === "" ||
+              !Number.isSafeInteger(orderNumber) ||
+              orderNumber < 1
+            ) {
+              alert("Match order must be a whole number of 1 or higher.");
+              return;
+            }
+
+            try {
+              await updateDoc(
+                doc(db, "events", eventId, "matches", matchDoc.id),
+                {
+                  name: newName.trim(),
+                  type: newType.trim(),
+                  order: orderNumber
+                }
+              );
+
+              await loadMatches(eventId);
+              alert("Match updated successfully!");
+            } catch (error) {
+              alert("Unable to update match: " + error.message);
+            }
+          });
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete Match";
+
+          deleteButton.addEventListener("click", async () => {
+            if (!confirm(
+              "Are you sure you want to delete this match?"
+            )) {
+              return;
+            }
+
+            try {
+              await deleteDoc(
+                doc(db, "events", eventId, "matches", matchDoc.id)
+              );
+
+              await loadMatches(eventId);
+            } catch (error) {
+              alert("Unable to delete match: " + error.message);
+            }
+          });
+
+          card.appendChild(editButton);
+          card.appendChild(deleteButton);
+          matchList.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Match loading failed:", error);
+        matchList.textContent = "Unable to load matches.";
+      }
+    }
+
+    async function loadDrafts() {
+      const draftList = document.getElementById("draft-list");
+
+      const draftsQuery = query(
+        collection(db, "events"),
+        where("publicationStatus", "==", "draft")
+      );
+
+      const snapshot = await getDocs(draftsQuery);
+      draftList.textContent = "";
+
       if (snapshot.empty) {
-        eventList.textContent = "No published events yet.";
+        draftList.textContent = "No event drafts yet.";
         return;
       }
-      snapshot.forEach(doc => {
-        const event = doc.data();
+
+      snapshot.forEach(eventDoc => {
+        const event = eventDoc.data();
         const card = document.createElement("article");
         const heading = document.createElement("h3");
-        heading.textContent = event.title || "Untitled event";
+
+        heading.textContent = event.title || "Untitled Event";
+        heading.style.cursor = "pointer";
+        heading.style.color = "#c8a85b";
+
+        heading.addEventListener("click", () => {
+          selectedEventId = eventDoc.id;
+
+          document.getElementById(
+            "event-details"
+          ).hidden = false;
+
+          document.getElementById(
+            "selected-event-title"
+          ).textContent = event.title || "Untitled Event";
+
+          document.getElementById(
+            "selected-event-info"
+          ).textContent =
+            `${event.type || "Event"} | ` +
+            `${event.date || "Date TBD"} | ` +
+            `${event.location || "Location TBD"}`;
+
+          loadMatches(selectedEventId);
+        });
+
         card.appendChild(heading);
-        eventList.appendChild(card);
+        draftList.appendChild(card);
       });
-    } catch (error) {
-      console.error("Event loading failed:", error);
-      eventList.textContent = "Unable to load events.";
-    }
-  }
-
-async function loadMatches(eventId) {
-  const matchList = document.getElementById("selected-event-matches");
-  matchList.textContent = "Loading matches...";
-
-  try {
-    const matchesQuery = query(
-      collection(db, "events", eventId, "matches")
-    );
-
-    const snapshot = await getDocs(matchesQuery);
-    const sortedMatches = snapshot.docs.sort((a, b) => {
-  return (Number(b.data().order) || 0) - (Number(a.data().order) || 0);
-});
-    matchList.textContent = "";
-
-    if (snapshot.empty) {
-      matchList.textContent = "No matches added yet.";
-      return;
     }
 
-sortedMatches.forEach(matchDoc => {      
-  const match = matchDoc.data();
-      const card = document.createElement("article");
-      const heading = document.createElement("h4");
+    onAuthStateChanged(auth, async (user) => {
+      const adminSection = document.getElementById("event-admin");
+      const draftsSection = document.getElementById("event-drafts");
 
-      heading.textContent = match.name || "Unnamed Match";
-      card.appendChild(heading);
+      adminSection.hidden = true;
+      draftsSection.hidden = true;
 
-      const type = document.createElement("p");
-      type.textContent = match.type || "Standard Match";
-      card.appendChild(type);
-const deleteButton = document.createElement("button");
-deleteButton.textContent = "Delete Match";
+      if (!user) return;
 
-deleteButton.addEventListener("click", async () => {
-  if (!confirm("Are you sure you want to delete this match?")) return;
+      try {
+        const profile = await getDoc(
+          doc(db, "users", user.uid)
+        );
 
-  try {
-    await deleteDoc(doc(db, "events", eventId, "matches", matchDoc.id));
-    await loadMatches(eventId);
-  } catch (error) {
-    alert("Unable to delete match: " + error.message);
-  }
-});
+        adminSection.hidden = !(
+          profile.exists() &&
+          profile.data().active === true &&
+          profile.data().role === "admin"
+        );
 
-const editButton = document.createElement("button");
-editButton.textContent = "Edit Match";
+        draftsSection.hidden = adminSection.hidden;
 
-editButton.addEventListener("click", async () => {
-const newName = prompt("Edit Match Name:", match.name);
-const newType = prompt("Edit Match Type:", match.type);
-if (newName === null || newType === null) return;
-
-if (!newName.trim() || !newType.trim()) {
-  alert("Match name and type cannot be empty.");
-  return;
-}
-
-try {
-  await updateDoc(
-    doc(db, "events", eventId, "matches", matchDoc.id),
-    {
-      name: newName.trim(),
-      type: newType.trim()
-    }
-  );
-
-  await loadMatches(eventId);
-  alert("Match updated successfully!");
-} catch (error) {
-  alert("Unable to update match: " + error.message);
-}
-});
-
-card.appendChild(editButton);
-
-card.appendChild(deleteButton);
-      matchList.appendChild(card);
-    });
-  } catch (error) {
-    console.error("Match loading failed:", error);
-    matchList.textContent = "Unable to load matches.";
-  }
-}
-
-async function loadDrafts() {
-  const draftList = document.getElementById("draft-list");
-
-const draftsQuery = query(
-  collection(db, "events"),
-  where("publicationStatus", "==", "draft")
-);
-const snapshot = await getDocs(draftsQuery);
-  
-draftList.textContent = "";
-
-if (snapshot.empty) {
-  draftList.textContent = "No event drafts yet.";
-  return;
-}
-
-
-snapshot.forEach(doc => {
-  const event = doc.data();
-  const card = document.createElement("article");
-  const heading = document.createElement("h3");
-
-  heading.textContent = event.title || "Untitled Event";
-  heading.style.cursor = "pointer";
-heading.style.color = "#c8a85b";
-heading.addEventListener("click", () => {
-selectedEventId = doc.id;
-  document.getElementById("event-details").hidden = false;
-
-  document.getElementById("selected-event-title").textContent =
-    event.title || "Untitled Event";
-
-  document.getElementById("selected-event-info").textContent =
-    `${event.type || "Event"} | ${event.date || "Date TBD"} | ${event.location || "Location TBD"}`;
-  loadMatches(selectedEventId);
-});
-  card.appendChild(heading);
-  draftList.appendChild(card);
-});
-
-}
-
-  
-onAuthStateChanged(auth, async (user) => {
-  const adminSection = document.getElementById("event-admin");
- 
-const draftsSection = document.getElementById("event-drafts");
-
-  adminSection.hidden = true;
-
-draftsSection.hidden = true;
-
-  if (!user) return;
-
-  try {
-    const profile = await getDoc(doc(db, "users", user.uid));
-    adminSection.hidden =
-      !(profile.exists() &&
-        profile.data().active === true &&
-        profile.data().role === "admin");
-  
-draftsSection.hidden = adminSection.hidden;
-
-if (!draftsSection.hidden) {
-  await loadDrafts();
-}
-
-  } catch (error) {
-    console.error("Admin verification failed:", error);
-  }
-});
-
-document.getElementById("add-match-btn").addEventListener("click", async () => {
-  if (!selectedEventId) {
-    alert("Please select an event first.");
-    return;
-  }
-
-  const name = document.getElementById("match-name").value.trim();
-  const type = document.getElementById("match-type").value.trim();
-
-  if (!name || !type) {
-    alert("Please enter a match name and match type.");
-    return;
-  }
-
-  try {
-    await addDoc(collection(db, "events", selectedEventId, "matches"), {
-      name,
-      type,
-      order: Number(document.getElementById("match-order").value),
-      createdAt: new Date().toISOString()
+        if (!draftsSection.hidden) {
+          await loadDrafts();
+        }
+      } catch (error) {
+        console.error("Admin verification failed:", error);
+      }
     });
 
-    alert("Match added successfully!");
-  } catch (error) {
-    console.error("Match booking failed:", error);
-    alert("Unable to add match: " + error.message);
-  }
-});
-  
-document.getElementById("create-event-btn").addEventListener("click", async () => {
-  const title = document.getElementById("event-title").value.trim();
-  const type = document.getElementById("event-type").value.trim();
-  const date = document.getElementById("event-date").value;
-  const location = document.getElementById("event-location").value.trim();
-  const description = document.getElementById("event-description").value.trim();
+    document.getElementById(
+      "add-match-btn"
+    ).addEventListener("click", async () => {
+      if (!selectedEventId) {
+        alert("Please select an event first.");
+        return;
+      }
 
-  if (!title || !type || !date) {
-    alert("Please enter an event name, type, and date.");
-    return;
-  }
+      const name = document.getElementById(
+        "match-name"
+      ).value.trim();
 
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Please sign in before creating an event.");
-    return;
-  }
+      const type = document.getElementById(
+        "match-type"
+      ).value.trim();
 
-  try {
-    const profile = await getDoc(doc(db, "users", user.uid));
-    if (!profile.exists() || profile.data().active !== true || profile.data().role !== "admin") {
-      alert("Only an active admin can create events.");
-      return;
-    }
+      const orderInput = document.getElementById(
+        "match-order"
+      ).value.trim();
 
-    await addDoc(collection(db, "events"), {
-      title,
-      type,
-      date,
-      location,
-      description,
-      authorUid: user.uid,
-      publicationStatus: "draft"
+      const orderNumber = Number(orderInput);
+
+      if (!name || !type) {
+        alert("Please enter a match name and match type.");
+        return;
+      }
+
+      if (
+        orderInput === "" ||
+        !Number.isSafeInteger(orderNumber) ||
+        orderNumber < 1
+      ) {
+        alert("Please enter a valid match order of 1 or higher.");
+        return;
+      }
+
+      try {
+        await addDoc(
+          collection(db, "events", selectedEventId, "matches"),
+          {
+            name,
+            type,
+            order: orderNumber,
+            createdAt: new Date().toISOString()
+          }
+        );
+
+        document.getElementById("match-name").value = "";
+        document.getElementById("match-type").value = "";
+        document.getElementById("match-order").value = "";
+
+        await loadMatches(selectedEventId);
+        alert("Match added successfully!");
+      } catch (error) {
+        console.error("Match booking failed:", error);
+        alert("Unable to add match: " + error.message);
+      }
     });
 
-    alert("Event draft created successfully!");
-  } catch (error) {
-    console.error("Event creation failed:", error);
-    alert("Unable to create event: " + error.message);
-  }
-});
+    document.getElementById(
+      "create-event-btn"
+    ).addEventListener("click", async () => {
+      const title = document.getElementById(
+        "event-title"
+      ).value.trim();
 
-  loadEvents();
-</script>
+      const type = document.getElementById(
+        "event-type"
+      ).value.trim();
+
+      const date = document.getElementById("event-date").value;
+
+      const location = document.getElementById(
+        "event-location"
+      ).value.trim();
+
+      const description = document.getElementById(
+        "event-description"
+      ).value.trim();
+
+      if (!title || !type || !date) {
+        alert("Please enter an event name, type, and date.");
+        return;
+      }
+
+      const user = auth.currentUser;
+
+      if (!user) {
+        alert("Please sign in before creating an event.");
+        return;
+      }
+
+      try {
+        const profile = await getDoc(
+          doc(db, "users", user.uid)
+        );
+
+        if (
+          !profile.exists() ||
+          profile.data().active !== true ||
+          profile.data().role !== "admin"
+        ) {
+          alert("Only an active admin can create events.");
+          return;
+        }
+
+        await addDoc(collection(db, "events"), {
+          title,
+          type,
+          date,
+          location,
+          description,
+          authorUid: user.uid,
+          publicationStatus: "draft"
+        });
+
+        alert("Event draft created successfully!");
+        await loadDrafts();
+      } catch (error) {
+        console.error("Event creation failed:", error);
+        alert("Unable to create event: " + error.message);
+      }
+    });
+
+    loadEvents();
+  </script>
 </body>
 </html>

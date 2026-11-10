@@ -12,20 +12,95 @@
       color: #f6f0f7;
       font-family: Arial, sans-serif;
     }
+
     header {
       background: #281038;
       border-bottom: 2px solid #c8a85b;
       padding: 24px;
       text-align: center;
     }
+
     h1 { color: #c8a85b; }
+
     main {
       padding: 24px;
       max-width: 1000px;
       margin: auto;
     }
+
+    input, textarea {
+      padding: 9px;
+      margin: 4px 4px 4px 0;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 8px 12px;
+      margin: 4px 5px 4px 0;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .match-card {
+      background: #1b1424;
+      border: 1px solid #49345a;
+      border-left: 4px solid #c8a85b;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+
+    .match-card h4 {
+      margin: 5px 0;
+      color: #f6f0f7;
+    }
+
+    .match-position {
+      color: #c8a85b;
+      font-weight: bold;
+      font-size: 13px;
+      letter-spacing: 0.4px;
+    }
+
+    .match-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 12px;
+    }
+
+    .move-button {
+      background: #372047;
+      border: 1px solid #c8a85b;
+      color: #f6f0f7;
+      border-radius: 5px;
+    }
+
+    .edit-button {
+      background: #c8a85b;
+      border: none;
+      color: #17101b;
+      border-radius: 5px;
+    }
+
+    .delete-button {
+      background: #49212c;
+      border: 1px solid #a84a5a;
+      color: #ffffff;
+      border-radius: 5px;
+    }
+
+    .event-draft {
+      padding: 10px 0;
+    }
   </style>
 </head>
+
 <body>
   <header>
     <h1>MPW ENGAGED</h1>
@@ -52,30 +127,48 @@
 
       <h3>Book a Match</h3>
       <div id="match-booking">
-        <input id="match-name" type="text" placeholder="Match Name" />
-        <input id="match-type" type="text" placeholder="Match Type" />
+        <input id="match-name" type="text"
+          placeholder="Match Name" />
+
+        <input id="match-type" type="text"
+          placeholder="Match Type" />
+
         <input id="match-order" type="number" min="1"
           placeholder="Match Order (1 = Opener)" />
-        <button id="add-match-btn" type="button">Add Match</button>
+
+        <button id="add-match-btn" type="button">
+          Add Match
+        </button>
       </div>
     </section>
 
     <section id="event-admin" hidden>
       <h2>Create Event</h2>
-      <input id="event-title" type="text" placeholder="Event Name" />
+
+      <input id="event-title" type="text"
+        placeholder="Event Name" />
+
       <input id="event-type" type="text"
         placeholder="Event Type (Engage, PLE, etc.)" />
+
       <input id="event-date" type="date" />
+
       <input id="event-location" type="text"
         placeholder="Event Location" />
+
       <textarea id="event-description"
         placeholder="Event Description"></textarea>
-      <button id="create-event-btn" type="button">Create Event</button>
+
+      <button id="create-event-btn" type="button">
+        Create Event
+      </button>
     </section>
   </main>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
     import {
       getFirestore,
@@ -87,7 +180,8 @@
       doc,
       getDoc,
       deleteDoc,
-      updateDoc
+      updateDoc,
+      writeBatch
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     import {
@@ -109,6 +203,27 @@
     const auth = getAuth(app);
 
     let selectedEventId = null;
+    let reorderingMatches = false;
+
+    function sortMatches(matchDocs) {
+      return [...matchDocs].sort((a, b) => {
+        const aOrder = Number(a.data().order) || 0;
+        const bOrder = Number(b.data().order) || 0;
+
+        if (aOrder !== bOrder) {
+          return bOrder - aOrder;
+        }
+
+        const aDate = a.data().createdAt || "";
+        const bDate = b.data().createdAt || "";
+
+        if (aDate !== bDate) {
+          return aDate.localeCompare(bDate);
+        }
+
+        return a.id.localeCompare(b.id);
+      });
+    }
 
     async function loadEvents() {
       const eventList = document.getElementById("event-list");
@@ -132,13 +247,101 @@
           const card = document.createElement("article");
           const heading = document.createElement("h3");
 
-          heading.textContent = event.title || "Untitled event";
+          heading.textContent =
+            event.title || "Untitled event";
+
           card.appendChild(heading);
           eventList.appendChild(card);
         });
       } catch (error) {
         console.error("Event loading failed:", error);
         eventList.textContent = "Unable to load events.";
+      }
+    }
+
+    async function moveMatch(eventId, matchId, direction) {
+      if (reorderingMatches) return;
+
+      reorderingMatches = true;
+
+      const matchList = document.getElementById(
+        "selected-event-matches"
+      );
+
+      try {
+        const snapshot = await getDocs(
+          collection(db, "events", eventId, "matches")
+        );
+
+        const matches = sortMatches(snapshot.docs);
+
+        const currentIndex = matches.findIndex(
+          matchDoc => matchDoc.id === matchId
+        );
+
+        if (currentIndex === -1) {
+          alert("Match not found. Please refresh the card.");
+          return;
+        }
+
+        const targetIndex = currentIndex + direction;
+
+        if (
+          targetIndex < 0 ||
+          targetIndex >= matches.length
+        ) {
+          return;
+        }
+
+        const movingMatch = matches[currentIndex];
+
+        matches[currentIndex] = matches[targetIndex];
+        matches[targetIndex] = movingMatch;
+
+        // Save every match's new position.
+        // The first match displayed gets the highest number.
+        // The last match displayed becomes Match 1.
+        // Batches are kept below Firestore's write limit.
+        const batchSize = 400;
+
+        for (
+          let start = 0;
+          start < matches.length;
+          start += batchSize
+        ) {
+          const batch = writeBatch(db);
+
+          const batchMatches = matches.slice(
+            start,
+            start + batchSize
+          );
+
+          batchMatches.forEach((matchDoc, offset) => {
+            const index = start + offset;
+
+            batch.update(
+              doc(db, "events", eventId, "matches", matchDoc.id),
+              {
+                order: matches.length - index
+              }
+            );
+          });
+
+          await batch.commit();
+        }
+
+        await loadMatches(eventId);
+
+      } catch (error) {
+        console.error("Match reorder failed:", error);
+
+        alert(
+          "Unable to move match: " + error.message
+        );
+
+        await loadMatches(eventId);
+      } finally {
+        reorderingMatches = false;
       }
     }
 
@@ -150,17 +353,15 @@
       matchList.textContent = "Loading matches...";
 
       try {
-        const matchesQuery = query(
+        const snapshot = await getDocs(
           collection(db, "events", eventId, "matches")
         );
 
-        const snapshot = await getDocs(matchesQuery);
+        const sortedMatches = sortMatches(snapshot.docs);
 
-        const sortedMatches = [...snapshot.docs].sort((a, b) => {
-          const aOrder = Number(a.data().order) || 0;
-          const bOrder = Number(b.data().order) || 0;
-          return bOrder - aOrder;
-        });
+        // Avoid displaying a previous event's results
+        // if the user switches events while loading.
+        if (selectedEventId !== eventId) return;
 
         matchList.textContent = "";
 
@@ -169,30 +370,85 @@
           return;
         }
 
-        sortedMatches.forEach(matchDoc => {
+        sortedMatches.forEach((matchDoc, index) => {
           const match = matchDoc.data();
+
           const card = document.createElement("article");
+          card.className = "match-card";
+
+          const position = document.createElement("div");
+          position.className = "match-position";
+
+          const orderNumber = Number(match.order);
+
+          const validOrder =
+            Number.isSafeInteger(orderNumber) &&
+            orderNumber >= 1;
+
+          if (index === 0 && sortedMatches.length > 1) {
+            position.textContent = validOrder
+              ? "MAIN EVENT — MATCH " + orderNumber
+              : "MAIN EVENT — ORDER NOT ASSIGNED";
+          } else if (
+            index === sortedMatches.length - 1 &&
+            sortedMatches.length > 1
+          ) {
+            position.textContent = validOrder
+              ? "OPENER — MATCH " + orderNumber
+              : "OPENER — ORDER NOT ASSIGNED";
+          } else {
+            position.textContent = validOrder
+              ? "MATCH " + orderNumber
+              : "MATCH ORDER NOT ASSIGNED";
+          }
+
+          card.appendChild(position);
 
           const heading = document.createElement("h4");
-          heading.textContent = match.name || "Unnamed Match";
+          heading.textContent =
+            match.name || "Unnamed Match";
+
           card.appendChild(heading);
 
           const type = document.createElement("p");
-          type.textContent = match.type || "Standard Match";
+          type.textContent =
+            match.type || "Standard Match";
+
           card.appendChild(type);
 
-          const order = document.createElement("p");
-          const savedOrder = Number(match.order);
+          const controls = document.createElement("div");
+          controls.className = "match-controls";
 
-          order.textContent =
-            Number.isInteger(savedOrder) && savedOrder >= 1
-              ? "Match " + savedOrder
-              : "Match order not assigned";
+          // MOVE UP
+          const upButton = document.createElement("button");
+          upButton.className = "move-button";
+          upButton.textContent = "↑ Move Up";
 
-          order.style.color = "#c8a85b";
-          card.appendChild(order);
+          upButton.disabled = index === 0;
 
+          upButton.addEventListener("click", async () => {
+            await moveMatch(eventId, matchDoc.id, -1);
+          });
+
+          controls.appendChild(upButton);
+
+          // MOVE DOWN
+          const downButton = document.createElement("button");
+          downButton.className = "move-button";
+          downButton.textContent = "↓ Move Down";
+
+          downButton.disabled =
+            index === sortedMatches.length - 1;
+
+          downButton.addEventListener("click", async () => {
+            await moveMatch(eventId, matchDoc.id, 1);
+          });
+
+          controls.appendChild(downButton);
+
+          // EDIT MATCH
           const editButton = document.createElement("button");
+          editButton.className = "edit-button";
           editButton.textContent = "Edit Match";
 
           editButton.addEventListener("click", async () => {
@@ -210,31 +466,30 @@
 
             if (newType === null) return;
 
-            const currentOrder =
-              Number.isInteger(savedOrder) && savedOrder >= 1
-                ? String(savedOrder)
-                : "";
-
             const newOrder = prompt(
               "Edit Match Order (1 = Opener, highest = Main Event):",
-              currentOrder
+              validOrder ? String(orderNumber) : ""
             );
 
             if (newOrder === null) return;
 
             if (!newName.trim() || !newType.trim()) {
-              alert("Match name and type cannot be empty.");
+              alert(
+                "Match name and type cannot be empty."
+              );
               return;
             }
 
-            const orderNumber = Number(newOrder.trim());
+            const newOrderNumber = Number(newOrder.trim());
 
             if (
               newOrder.trim() === "" ||
-              !Number.isSafeInteger(orderNumber) ||
-              orderNumber < 1
+              !Number.isSafeInteger(newOrderNumber) ||
+              newOrderNumber < 1
             ) {
-              alert("Match order must be a whole number of 1 or higher.");
+              alert(
+                "Match order must be a whole number of 1 or higher."
+              );
               return;
             }
 
@@ -244,18 +499,25 @@
                 {
                   name: newName.trim(),
                   type: newType.trim(),
-                  order: orderNumber
+                  order: newOrderNumber
                 }
               );
 
               await loadMatches(eventId);
               alert("Match updated successfully!");
+
             } catch (error) {
-              alert("Unable to update match: " + error.message);
+              alert(
+                "Unable to update match: " + error.message
+              );
             }
           });
 
+          controls.appendChild(editButton);
+
+          // DELETE MATCH
           const deleteButton = document.createElement("button");
+          deleteButton.className = "delete-button";
           deleteButton.textContent = "Delete Match";
 
           deleteButton.addEventListener("click", async () => {
@@ -271,15 +533,20 @@
               );
 
               await loadMatches(eventId);
+
             } catch (error) {
-              alert("Unable to delete match: " + error.message);
+              alert(
+                "Unable to delete match: " + error.message
+              );
             }
           });
 
-          card.appendChild(editButton);
-          card.appendChild(deleteButton);
+          controls.appendChild(deleteButton);
+
+          card.appendChild(controls);
           matchList.appendChild(card);
         });
+
       } catch (error) {
         console.error("Match loading failed:", error);
         matchList.textContent = "Unable to load matches.";
@@ -287,7 +554,9 @@
     }
 
     async function loadDrafts() {
-      const draftList = document.getElementById("draft-list");
+      const draftList = document.getElementById(
+        "draft-list"
+      );
 
       const draftsQuery = query(
         collection(db, "events"),
@@ -295,6 +564,7 @@
       );
 
       const snapshot = await getDocs(draftsQuery);
+
       draftList.textContent = "";
 
       if (snapshot.empty) {
@@ -305,9 +575,13 @@
       snapshot.forEach(eventDoc => {
         const event = eventDoc.data();
         const card = document.createElement("article");
+        card.className = "event-draft";
+
         const heading = document.createElement("h3");
 
-        heading.textContent = event.title || "Untitled Event";
+        heading.textContent =
+          event.title || "Untitled Event";
+
         heading.style.cursor = "pointer";
         heading.style.color = "#c8a85b";
 
@@ -320,7 +594,8 @@
 
           document.getElementById(
             "selected-event-title"
-          ).textContent = event.title || "Untitled Event";
+          ).textContent =
+            event.title || "Untitled Event";
 
           document.getElementById(
             "selected-event-info"
@@ -338,8 +613,13 @@
     }
 
     onAuthStateChanged(auth, async (user) => {
-      const adminSection = document.getElementById("event-admin");
-      const draftsSection = document.getElementById("event-drafts");
+      const adminSection = document.getElementById(
+        "event-admin"
+      );
+
+      const draftsSection = document.getElementById(
+        "event-drafts"
+      );
 
       adminSection.hidden = true;
       draftsSection.hidden = true;
@@ -362,11 +642,16 @@
         if (!draftsSection.hidden) {
           await loadDrafts();
         }
+
       } catch (error) {
-        console.error("Admin verification failed:", error);
+        console.error(
+          "Admin verification failed:",
+          error
+        );
       }
     });
 
+    // BOOK A MATCH
     document.getElementById(
       "add-match-btn"
     ).addEventListener("click", async () => {
@@ -390,7 +675,9 @@
       const orderNumber = Number(orderInput);
 
       if (!name || !type) {
-        alert("Please enter a match name and match type.");
+        alert(
+          "Please enter a match name and match type."
+        );
         return;
       }
 
@@ -399,13 +686,20 @@
         !Number.isSafeInteger(orderNumber) ||
         orderNumber < 1
       ) {
-        alert("Please enter a valid match order of 1 or higher.");
+        alert(
+          "Please enter a valid match order of 1 or higher."
+        );
         return;
       }
 
       try {
         await addDoc(
-          collection(db, "events", selectedEventId, "matches"),
+          collection(
+            db,
+            "events",
+            selectedEventId,
+            "matches"
+          ),
           {
             name,
             type,
@@ -414,18 +708,35 @@
           }
         );
 
-        document.getElementById("match-name").value = "";
-        document.getElementById("match-type").value = "";
-        document.getElementById("match-order").value = "";
+        document.getElementById(
+          "match-name"
+        ).value = "";
+
+        document.getElementById(
+          "match-type"
+        ).value = "";
+
+        document.getElementById(
+          "match-order"
+        ).value = "";
 
         await loadMatches(selectedEventId);
+
         alert("Match added successfully!");
+
       } catch (error) {
-        console.error("Match booking failed:", error);
-        alert("Unable to add match: " + error.message);
+        console.error(
+          "Match booking failed:",
+          error
+        );
+
+        alert(
+          "Unable to add match: " + error.message
+        );
       }
     });
 
+    // CREATE EVENT
     document.getElementById(
       "create-event-btn"
     ).addEventListener("click", async () => {
@@ -437,7 +748,9 @@
         "event-type"
       ).value.trim();
 
-      const date = document.getElementById("event-date").value;
+      const date = document.getElementById(
+        "event-date"
+      ).value;
 
       const location = document.getElementById(
         "event-location"
@@ -448,14 +761,18 @@
       ).value.trim();
 
       if (!title || !type || !date) {
-        alert("Please enter an event name, type, and date.");
+        alert(
+          "Please enter an event name, type, and date."
+        );
         return;
       }
 
       const user = auth.currentUser;
 
       if (!user) {
-        alert("Please sign in before creating an event.");
+        alert(
+          "Please sign in before creating an event."
+        );
         return;
       }
 
@@ -469,7 +786,9 @@
           profile.data().active !== true ||
           profile.data().role !== "admin"
         ) {
-          alert("Only an active admin can create events.");
+          alert(
+            "Only an active admin can create events."
+          );
           return;
         }
 
@@ -483,11 +802,21 @@
           publicationStatus: "draft"
         });
 
-        alert("Event draft created successfully!");
+        alert(
+          "Event draft created successfully!"
+        );
+
         await loadDrafts();
+
       } catch (error) {
-        console.error("Event creation failed:", error);
-        alert("Unable to create event: " + error.message);
+        console.error(
+          "Event creation failed:",
+          error
+        );
+
+        alert(
+          "Unable to create event: " + error.message
+        );
       }
     });
 

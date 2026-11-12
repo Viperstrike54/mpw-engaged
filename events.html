@@ -2,504 +2,492 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MPW ENGAGED | Event Hub</title>
-  <style>
-    body {
-      margin: 0;
-      background: #0c0a10;
-      color: #f6f0f7;
-      font-family: Arial, sans-serif;
-    }
-
-    header {
-      background: #281038;
-      border-bottom: 2px solid #c8a85b;
-      padding: 24px;
-      text-align: center;
-    }
-
-    h1 { color: #c8a85b; }
-
-    main {
-      padding: 24px;
-      max-width: 1000px;
-      margin: auto;
-    }
-
-    input, textarea {
-      padding: 9px;
-      margin: 4px 4px 4px 0;
-      max-width: 100%;
-      box-sizing: border-box;
-    }
-
-    button {
-      padding: 8px 12px;
-      margin: 4px 5px 4px 0;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .match-card {
-      background: #1b1424;
-      border: 1px solid #49345a;
-      border-left: 4px solid #c8a85b;
-      border-radius: 8px;
-      padding: 14px;
-      margin: 12px 0;
-    }
-
-    .match-card h4 {
-      margin: 5px 0;
-      color: #f6f0f7;
-    }
-
-    .match-position {
-      color: #c8a85b;
-      font-weight: bold;
-      font-size: 13px;
-      letter-spacing: 0.4px;
-    }
-
-    .match-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 12px;
-    }
-
-    .move-button {
-      background: #372047;
-      border: 1px solid #c8a85b;
-      color: #f6f0f7;
-      border-radius: 5px;
-    }
-
-    .edit-button {
-      background: #c8a85b;
-      border: none;
-      color: #17101b;
-      border-radius: 5px;
-    }
-
-    .delete-button {
-      background: #49212c;
-      border: 1px solid #a84a5a;
-      color: #ffffff;
-      border-radius: 5px;
-    }
-
-    .event-draft {
-      padding: 10px 0;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MPW ENGAGED | Event Hub</title>
+<style>
+  :root {
+    --gold: #c8a85b;
+    --purple: #281038;
+    --background: #0c0a10;
+    --card: #1b1424;
+    --text: #f6f0f7;
+  }
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+  }
+  header {
+    background: var(--purple);
+    border-bottom: 2px solid var(--gold);
+    padding: 24px;
+    text-align: center;
+  }
+  h1 { color: var(--gold); }
+  main {
+    max-width: 1000px;
+    padding: 24px;
+    margin: auto;
+  }
+  section { margin: 30px 0; }
+  input, textarea {
+    padding: 10px;
+    margin: 5px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  button {
+    padding: 9px 13px;
+    margin: 4px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .gold-button {
+    background: var(--gold);
+    color: #17101b;
+    border: none;
+    font-weight: bold;
+  }
+  .purple-button {
+    background: #372047;
+    border: 1px solid var(--gold);
+    color: white;
+  }
+  .danger-button {
+    background: #49212c;
+    border: 1px solid #a84a5a;
+    color: white;
+  }
+  .event-card, .match-card {
+    background: var(--card);
+    border: 1px solid #49345a;
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 12px 0;
+  }
+  .event-card h3, .match-card h4 {
+    margin: 6px 0 10px;
+  }
+  .position, .status {
+    color: var(--gold);
+    font-weight: bold;
+    font-size: 13px;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 12px;
+  }
+  .muted { color: #c3b7c9; }
+  [hidden] { display: none !important; }
+</style>
 </head>
-
 <body>
-  <header>
-    <h1>MPW ENGAGED</h1>
-    <p>SHOWS & MATCH CARDS</p>
-  </header>
 
-  <main>
-    <h2>Event Hub</h2>
-    <div id="event-list">Loading events...</div>
+<header>
+  <h1>MPW ENGAGED</h1>
+  <p>SHOWS & MATCH CARDS</p>
+</header>
 
-    <section id="event-drafts" hidden>
-      <h2>My Event Drafts</h2>
-      <div id="draft-list">Loading drafts...</div>
-    </section>
+<main>
+  <h2>Event Hub</h2>
+  <p class="muted">Official MPW shows and match cards</p>
+  <div id="event-list">Loading events...</div>
 
-    <section id="event-details" hidden>
-      <h2 id="selected-event-title">Event Management</h2>
-      <p id="selected-event-info"></p>
+  <section id="event-drafts" hidden>
+    <h2>My Event Drafts</h2>
+    <div id="draft-list">Loading drafts...</div>
+  </section>
 
-      <h3>Match Card</h3>
-      <div id="selected-event-matches">
-        No matches added yet.
-      </div>
+  <section id="event-details" hidden>
+    <h2 id="selected-event-title">Event Management</h2>
+    <p id="selected-event-info"></p>
+    <p id="selected-event-status" class="status"></p>
 
+    <div id="publishing-controls" hidden>
+      <button id="publish-event-btn"
+        class="gold-button" type="button">
+        Publish Event
+      </button>
+      <button id="unpublish-event-btn"
+        class="purple-button" type="button" hidden>
+        Unpublish Event
+      </button>
+    </div>
+
+    <h3>Match Card</h3>
+    <div id="selected-event-matches">
+      No matches added yet.
+    </div>
+
+    <div id="match-booking-section" hidden>
       <h3>Book a Match</h3>
       <div id="match-booking">
         <input id="match-name" type="text"
-          placeholder="Match Name" />
-
+          placeholder="Match Name">
         <input id="match-type" type="text"
-          placeholder="Match Type" />
-
+          placeholder="Match Type">
         <input id="match-order" type="number" min="1"
-          placeholder="Match Order (1 = Opener)" />
-
-        <button id="add-match-btn" type="button">
+          placeholder="Match Order (1 = Opener)">
+        <button id="add-match-btn"
+          class="gold-button" type="button">
           Add Match
         </button>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="event-admin" hidden>
-      <h2>Create Event</h2>
+  <section id="event-admin" hidden>
+    <h2>Create Event</h2>
+    <input id="event-title" type="text"
+      placeholder="Event Name">
+    <input id="event-type" type="text"
+      placeholder="Event Type (Engage, PLE, etc.)">
+    <input id="event-date" type="date">
+    <input id="event-location" type="text"
+      placeholder="Event Location">
+    <textarea id="event-description"
+      placeholder="Event Description"></textarea>
+    <button id="create-event-btn"
+      class="gold-button" type="button">
+      Create Event
+    </button>
+  </section>
+</main>
 
-      <input id="event-title" type="text"
-        placeholder="Event Name" />
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
-      <input id="event-type" type="text"
-        placeholder="Event Type (Engage, PLE, etc.)" />
+import {
+  getFirestore, collection, query, where,
+  getDocs, addDoc, doc, getDoc, deleteDoc,
+  updateDoc, writeBatch
+} from
+  "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-      <input id="event-date" type="date" />
+import { getAuth, onAuthStateChanged } from
+  "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-      <input id="event-location" type="text"
-        placeholder="Event Location" />
+const firebaseConfig = {
+  apiKey: "AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA",
+  authDomain: "mpw-engaged.firebaseapp.com",
+  projectId: "mpw-engaged",
+  storageBucket: "mpw-engaged.firebasestorage.app",
+  messagingSenderId: "133272625859",
+  appId: "1:133272625859:web:d1e09eaf1b4613172a7876"
+};
 
-      <textarea id="event-description"
-        placeholder="Event Description"></textarea>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-      <button id="create-event-btn" type="button">
-        Create Event
-      </button>
-    </section>
-  </main>
+let selectedEventId = null;
+let selectedEventStatus = null;
+let isAdmin = false;
+let reorderingMatches = false;
+let savingStatus = false;
 
-  <script type="module">
-    import {
-      initializeApp
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+const el = id => document.getElementById(id);
 
-    import {
-      getFirestore,
-      collection,
-      query,
-      where,
-      getDocs,
-      addDoc,
-      doc,
-      getDoc,
-      deleteDoc,
-      updateDoc,
-      writeBatch
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+function sortMatches(docs) {
+  return [...docs].sort((a, b) => {
+    const difference =
+      (Number(b.data().order) || 0) -
+      (Number(a.data().order) || 0);
 
-    import {
-      getAuth,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    if (difference) return difference;
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA",
-      authDomain: "mpw-engaged.firebaseapp.com",
-      projectId: "mpw-engaged",
-      storageBucket: "mpw-engaged.firebasestorage.app",
-      messagingSenderId: "133272625859",
-      appId: "1:133272625859:web:d1e09eaf1b4613172a7876"
-    };
+    const aDate = a.data().createdAt || "";
+    const bDate = b.data().createdAt || "";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    return aDate.localeCompare(bDate) ||
+      a.id.localeCompare(b.id);
+  });
+}
 
-    let selectedEventId = null;
-    let reorderingMatches = false;
+function makeButton(text, className, action) {
+  const button = document.createElement("button");
+  button.textContent = text;
+  button.className = className;
+  button.type = "button";
+  button.addEventListener("click", action);
+  return button;
+}
 
-    function sortMatches(matchDocs) {
-      return [...matchDocs].sort((a, b) => {
-        const aOrder = Number(a.data().order) || 0;
-        const bOrder = Number(b.data().order) || 0;
+function updateManagementControls() {
+  const canManage = isAdmin &&
+    selectedEventId !== null;
 
-        if (aOrder !== bOrder) {
-          return bOrder - aOrder;
-        }
+  el("publishing-controls").hidden = !canManage;
+  el("match-booking-section").hidden = !canManage;
 
-        const aDate = a.data().createdAt || "";
-        const bDate = b.data().createdAt || "";
+  el("publish-event-btn").hidden =
+    selectedEventStatus !== "draft";
 
-        if (aDate !== bDate) {
-          return aDate.localeCompare(bDate);
-        }
+  el("unpublish-event-btn").hidden =
+    selectedEventStatus !== "published";
 
-        return a.id.localeCompare(b.id);
-      });
+  el("selected-event-status").textContent =
+    selectedEventStatus === "published"
+      ? "PUBLISHED — Official MPW Event"
+      : "DRAFT — Not Publicly Announced";
+}
+
+async function openEvent(eventId) {
+  selectedEventId = eventId;
+  el("event-details").hidden = false;
+  el("selected-event-title").textContent =
+    "Loading event...";
+
+  try {
+    const snapshot = await getDoc(
+      doc(db, "events", eventId)
+    );
+
+    if (selectedEventId !== eventId) return;
+
+    if (!snapshot.exists()) {
+      throw new Error("Event not found.");
     }
 
-    async function loadEvents() {
-      const eventList = document.getElementById("event-list");
+    const event = snapshot.data();
 
-      try {
-        const publishedEvents = query(
-          collection(db, "events"),
-          where("publicationStatus", "==", "published")
-        );
-
-        const snapshot = await getDocs(publishedEvents);
-        eventList.textContent = "";
-
-        if (snapshot.empty) {
-          eventList.textContent = "No published events yet.";
-          return;
-        }
-
-        snapshot.forEach(eventDoc => {
-          const event = eventDoc.data();
-          const card = document.createElement("article");
-          const heading = document.createElement("h3");
-
-          heading.textContent =
-            event.title || "Untitled event";
-
-          card.appendChild(heading);
-          eventList.appendChild(card);
-        });
-      } catch (error) {
-        console.error("Event loading failed:", error);
-        eventList.textContent = "Unable to load events.";
-      }
+    // Never show a private draft to a public visitor.
+    if (event.publicationStatus !== "published" &&
+        !isAdmin) {
+      el("event-details").hidden = true;
+      throw new Error("This event is not public.");
     }
 
-    async function moveMatch(eventId, matchId, direction) {
-      if (reorderingMatches) return;
+    selectedEventStatus = event.publicationStatus;
 
-      reorderingMatches = true;
+    el("selected-event-title").textContent =
+      event.title || "Untitled Event";
 
-      const matchList = document.getElementById(
-        "selected-event-matches"
+    el("selected-event-info").textContent =
+      `${event.type || "Event"} | ` +
+      `${event.date || "Date TBD"} | ` +
+      `${event.location || "Location TBD"}`;
+
+    updateManagementControls();
+    await loadMatches(eventId);
+
+    el("event-details").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+  } catch (error) {
+    console.error("Opening event failed:", error);
+    alert("Unable to open event: " + error.message);
+  }
+}
+
+function makeEventCard(eventDoc, isDraft = false) {
+  const event = eventDoc.data();
+  const card = document.createElement("article");
+  card.className = "event-card";
+
+  const heading = document.createElement("h3");
+  heading.textContent = event.title || "Untitled Event";
+  card.appendChild(heading);
+
+  const info = document.createElement("p");
+  info.textContent =
+    `${event.type || "Event"} | ` +
+    `${event.date || "Date TBD"} | ` +
+    `${event.location || "Location TBD"}`;
+  card.appendChild(info);
+
+  const status = document.createElement("p");
+  status.className = "status";
+  status.textContent = isDraft ? "DRAFT" : "PUBLISHED";
+  card.appendChild(status);
+
+  card.appendChild(makeButton(
+    isAdmin ? "Manage Event" : "View Match Card",
+    "gold-button",
+    () => openEvent(eventDoc.id)
+  ));
+
+  return card;
+}
+
+async function loadEvents() {
+  const eventList = el("event-list");
+  eventList.textContent = "Loading events...";
+
+  try {
+    const snapshot = await getDocs(query(
+      collection(db, "events"),
+      where("publicationStatus", "==", "published")
+    ));
+
+    eventList.textContent = "";
+
+    if (snapshot.empty) {
+      eventList.textContent = "No published events yet.";
+      return;
+    }
+
+    snapshot.forEach(eventDoc => {
+      eventList.appendChild(makeEventCard(eventDoc));
+    });
+
+  } catch (error) {
+    console.error("Event loading failed:", error);
+    eventList.textContent = "Unable to load events.";
+  }
+}
+
+async function loadDrafts() {
+  if (!isAdmin) return;
+
+  const draftList = el("draft-list");
+  draftList.textContent = "Loading drafts...";
+
+  try {
+    const snapshot = await getDocs(query(
+      collection(db, "events"),
+      where("publicationStatus", "==", "draft")
+    ));
+
+    draftList.textContent = "";
+
+    if (snapshot.empty) {
+      draftList.textContent = "No event drafts yet.";
+      return;
+    }
+
+    snapshot.forEach(eventDoc => {
+      draftList.appendChild(
+        makeEventCard(eventDoc, true)
       );
+    });
 
-      try {
-        const snapshot = await getDocs(
-          collection(db, "events", eventId, "matches")
-        );
+  } catch (error) {
+    console.error("Draft loading failed:", error);
+    draftList.textContent = "Unable to load drafts.";
+  }
+}
 
-        const matches = sortMatches(snapshot.docs);
+async function loadMatches(eventId) {
+  const list = el("selected-event-matches");
+  list.textContent = "Loading matches...";
 
-        const currentIndex = matches.findIndex(
-          matchDoc => matchDoc.id === matchId
-        );
+  try {
+    const snapshot = await getDocs(
+      collection(db, "events", eventId, "matches")
+    );
 
-        if (currentIndex === -1) {
-          alert("Match not found. Please refresh the card.");
-          return;
-        }
+    if (selectedEventId !== eventId) return;
 
-        const targetIndex = currentIndex + direction;
+    const matches = sortMatches(snapshot.docs);
+    list.textContent = "";
 
-        if (
-          targetIndex < 0 ||
-          targetIndex >= matches.length
-        ) {
-          return;
-        }
-
-        const movingMatch = matches[currentIndex];
-
-        matches[currentIndex] = matches[targetIndex];
-        matches[targetIndex] = movingMatch;
-
-        // Save every match's new position.
-        // The first match displayed gets the highest number.
-        // The last match displayed becomes Match 1.
-        // Batches are kept below Firestore's write limit.
-        const batchSize = 400;
-
-        for (
-          let start = 0;
-          start < matches.length;
-          start += batchSize
-        ) {
-          const batch = writeBatch(db);
-
-          const batchMatches = matches.slice(
-            start,
-            start + batchSize
-          );
-
-          batchMatches.forEach((matchDoc, offset) => {
-            const index = start + offset;
-
-            batch.update(
-              doc(db, "events", eventId, "matches", matchDoc.id),
-              {
-                order: matches.length - index
-              }
-            );
-          });
-
-          await batch.commit();
-        }
-
-        await loadMatches(eventId);
-
-      } catch (error) {
-        console.error("Match reorder failed:", error);
-
-        alert(
-          "Unable to move match: " + error.message
-        );
-
-        await loadMatches(eventId);
-      } finally {
-        reorderingMatches = false;
-      }
+    if (!matches.length) {
+      list.textContent = "No matches added yet.";
+      return;
     }
 
-    async function loadMatches(eventId) {
-      const matchList = document.getElementById(
-        "selected-event-matches"
-      );
+    matches.forEach((matchDoc, index) => {
+      const match = matchDoc.data();
+      const card = document.createElement("article");
+      card.className = "match-card";
 
-      matchList.textContent = "Loading matches...";
+      const position = document.createElement("p");
+      position.className = "position";
 
-      try {
-        const snapshot = await getDocs(
-          collection(db, "events", eventId, "matches")
+      const order = Number(match.order);
+      const validOrder =
+        Number.isSafeInteger(order) && order >= 1;
+
+      const label = index === 0 && matches.length > 1
+        ? "MAIN EVENT"
+        : index === matches.length - 1 &&
+          matches.length > 1
+          ? "OPENER"
+          : "MATCH";
+
+      position.textContent =
+        label + " — " +
+        (validOrder ? "MATCH " + order : "ORDER NOT ASSIGNED");
+
+      card.appendChild(position);
+
+      const heading = document.createElement("h4");
+      heading.textContent = match.name || "Unnamed Match";
+      card.appendChild(heading);
+
+      const type = document.createElement("p");
+      type.textContent = match.type || "Standard Match";
+      card.appendChild(type);
+
+      // Public visitors only see the match information.
+      if (isAdmin) {
+        const controls = document.createElement("div");
+        controls.className = "controls";
+
+        const up = makeButton(
+          "↑ Move Up", "purple-button",
+          () => moveMatch(eventId, matchDoc.id, -1)
         );
+        up.disabled = index === 0;
+        controls.appendChild(up);
 
-        const sortedMatches = sortMatches(snapshot.docs);
+        const down = makeButton(
+          "↓ Move Down", "purple-button",
+          () => moveMatch(eventId, matchDoc.id, 1)
+        );
+        down.disabled = index === matches.length - 1;
+        controls.appendChild(down);
 
-        // Avoid displaying a previous event's results
-        // if the user switches events while loading.
-        if (selectedEventId !== eventId) return;
-
-        matchList.textContent = "";
-
-        if (snapshot.empty) {
-          matchList.textContent = "No matches added yet.";
-          return;
-        }
-
-        sortedMatches.forEach((matchDoc, index) => {
-          const match = matchDoc.data();
-
-          const card = document.createElement("article");
-          card.className = "match-card";
-
-          const position = document.createElement("div");
-          position.className = "match-position";
-
-          const orderNumber = Number(match.order);
-
-          const validOrder =
-            Number.isSafeInteger(orderNumber) &&
-            orderNumber >= 1;
-
-          if (index === 0 && sortedMatches.length > 1) {
-            position.textContent = validOrder
-              ? "MAIN EVENT — MATCH " + orderNumber
-              : "MAIN EVENT — ORDER NOT ASSIGNED";
-          } else if (
-            index === sortedMatches.length - 1 &&
-            sortedMatches.length > 1
-          ) {
-            position.textContent = validOrder
-              ? "OPENER — MATCH " + orderNumber
-              : "OPENER — ORDER NOT ASSIGNED";
-          } else {
-            position.textContent = validOrder
-              ? "MATCH " + orderNumber
-              : "MATCH ORDER NOT ASSIGNED";
-          }
-
-          card.appendChild(position);
-
-          const heading = document.createElement("h4");
-          heading.textContent =
-            match.name || "Unnamed Match";
-
-          card.appendChild(heading);
-
-          const type = document.createElement("p");
-          type.textContent =
-            match.type || "Standard Match";
-
-          card.appendChild(type);
-
-          const controls = document.createElement("div");
-          controls.className = "match-controls";
-
-          // MOVE UP
-          const upButton = document.createElement("button");
-          upButton.className = "move-button";
-          upButton.textContent = "↑ Move Up";
-
-          upButton.disabled = index === 0;
-
-          upButton.addEventListener("click", async () => {
-            await moveMatch(eventId, matchDoc.id, -1);
-          });
-
-          controls.appendChild(upButton);
-
-          // MOVE DOWN
-          const downButton = document.createElement("button");
-          downButton.className = "move-button";
-          downButton.textContent = "↓ Move Down";
-
-          downButton.disabled =
-            index === sortedMatches.length - 1;
-
-          downButton.addEventListener("click", async () => {
-            await moveMatch(eventId, matchDoc.id, 1);
-          });
-
-          controls.appendChild(downButton);
-
-          // EDIT MATCH
-          const editButton = document.createElement("button");
-          editButton.className = "edit-button";
-          editButton.textContent = "Edit Match";
-
-          editButton.addEventListener("click", async () => {
-            const newName = prompt(
-              "Edit Match Name:",
-              match.name || ""
+        controls.appendChild(makeButton(
+          "Edit Match", "gold-button",
+          async () => {
+            const name = prompt(
+              "Edit Match Name:", match.name || ""
             );
+            if (name === null) return;
 
-            if (newName === null) return;
-
-            const newType = prompt(
-              "Edit Match Type:",
-              match.type || ""
+            const type = prompt(
+              "Edit Match Type:", match.type || ""
             );
+            if (type === null) return;
 
-            if (newType === null) return;
-
-            const newOrder = prompt(
-              "Edit Match Order (1 = Opener, highest = Main Event):",
-              validOrder ? String(orderNumber) : ""
+            const orderInput = prompt(
+              "Match Order (1 = Opener):",
+              validOrder ? String(order) : ""
             );
+            if (orderInput === null) return;
 
-            if (newOrder === null) return;
+            const newOrder = Number(orderInput.trim());
 
-            if (!newName.trim() || !newType.trim()) {
-              alert(
-                "Match name and type cannot be empty."
-              );
-              return;
-            }
-
-            const newOrderNumber = Number(newOrder.trim());
-
-            if (
-              newOrder.trim() === "" ||
-              !Number.isSafeInteger(newOrderNumber) ||
-              newOrderNumber < 1
-            ) {
-              alert(
-                "Match order must be a whole number of 1 or higher."
-              );
+            if (!name.trim() || !type.trim() ||
+                orderInput.trim() === "" ||
+                !Number.isSafeInteger(newOrder) ||
+                newOrder < 1) {
+              alert("Enter a valid name, type, and match order.");
               return;
             }
 
             try {
               await updateDoc(
-                doc(db, "events", eventId, "matches", matchDoc.id),
+                doc(db, "events", eventId,
+                    "matches", matchDoc.id),
                 {
-                  name: newName.trim(),
-                  type: newType.trim(),
-                  order: newOrderNumber
+                  name: name.trim(),
+                  type: type.trim(),
+                  order: newOrder
                 }
               );
 
@@ -507,320 +495,270 @@
               alert("Match updated successfully!");
 
             } catch (error) {
-              alert(
-                "Unable to update match: " + error.message
-              );
+              alert("Unable to update match: " + error.message);
             }
-          });
+          }
+        ));
 
-          controls.appendChild(editButton);
-
-          // DELETE MATCH
-          const deleteButton = document.createElement("button");
-          deleteButton.className = "delete-button";
-          deleteButton.textContent = "Delete Match";
-
-          deleteButton.addEventListener("click", async () => {
-            if (!confirm(
-              "Are you sure you want to delete this match?"
-            )) {
-              return;
-            }
+        controls.appendChild(makeButton(
+          "Delete Match", "danger-button",
+          async () => {
+            if (!confirm("Delete this match?")) return;
 
             try {
               await deleteDoc(
-                doc(db, "events", eventId, "matches", matchDoc.id)
+                doc(db, "events", eventId,
+                    "matches", matchDoc.id)
               );
-
               await loadMatches(eventId);
-
             } catch (error) {
-              alert(
-                "Unable to delete match: " + error.message
-              );
+              alert("Unable to delete match: " + error.message);
             }
-          });
-
-          controls.appendChild(deleteButton);
-
-          card.appendChild(controls);
-          matchList.appendChild(card);
-        });
-
-      } catch (error) {
-        console.error("Match loading failed:", error);
-        matchList.textContent = "Unable to load matches.";
-      }
-    }
-
-    async function loadDrafts() {
-      const draftList = document.getElementById(
-        "draft-list"
-      );
-
-      const draftsQuery = query(
-        collection(db, "events"),
-        where("publicationStatus", "==", "draft")
-      );
-
-      const snapshot = await getDocs(draftsQuery);
-
-      draftList.textContent = "";
-
-      if (snapshot.empty) {
-        draftList.textContent = "No event drafts yet.";
-        return;
-      }
-
-      snapshot.forEach(eventDoc => {
-        const event = eventDoc.data();
-        const card = document.createElement("article");
-        card.className = "event-draft";
-
-        const heading = document.createElement("h3");
-
-        heading.textContent =
-          event.title || "Untitled Event";
-
-        heading.style.cursor = "pointer";
-        heading.style.color = "#c8a85b";
-
-        heading.addEventListener("click", () => {
-          selectedEventId = eventDoc.id;
-
-          document.getElementById(
-            "event-details"
-          ).hidden = false;
-
-          document.getElementById(
-            "selected-event-title"
-          ).textContent =
-            event.title || "Untitled Event";
-
-          document.getElementById(
-            "selected-event-info"
-          ).textContent =
-            `${event.type || "Event"} | ` +
-            `${event.date || "Date TBD"} | ` +
-            `${event.location || "Location TBD"}`;
-
-          loadMatches(selectedEventId);
-        });
-
-        card.appendChild(heading);
-        draftList.appendChild(card);
-      });
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-      const adminSection = document.getElementById(
-        "event-admin"
-      );
-
-      const draftsSection = document.getElementById(
-        "event-drafts"
-      );
-
-      adminSection.hidden = true;
-      draftsSection.hidden = true;
-
-      if (!user) return;
-
-      try {
-        const profile = await getDoc(
-          doc(db, "users", user.uid)
-        );
-
-        adminSection.hidden = !(
-          profile.exists() &&
-          profile.data().active === true &&
-          profile.data().role === "admin"
-        );
-
-        draftsSection.hidden = adminSection.hidden;
-
-        if (!draftsSection.hidden) {
-          await loadDrafts();
-        }
-
-      } catch (error) {
-        console.error(
-          "Admin verification failed:",
-          error
-        );
-      }
-    });
-
-    // BOOK A MATCH
-    document.getElementById(
-      "add-match-btn"
-    ).addEventListener("click", async () => {
-      if (!selectedEventId) {
-        alert("Please select an event first.");
-        return;
-      }
-
-      const name = document.getElementById(
-        "match-name"
-      ).value.trim();
-
-      const type = document.getElementById(
-        "match-type"
-      ).value.trim();
-
-      const orderInput = document.getElementById(
-        "match-order"
-      ).value.trim();
-
-      const orderNumber = Number(orderInput);
-
-      if (!name || !type) {
-        alert(
-          "Please enter a match name and match type."
-        );
-        return;
-      }
-
-      if (
-        orderInput === "" ||
-        !Number.isSafeInteger(orderNumber) ||
-        orderNumber < 1
-      ) {
-        alert(
-          "Please enter a valid match order of 1 or higher."
-        );
-        return;
-      }
-
-      try {
-        await addDoc(
-          collection(
-            db,
-            "events",
-            selectedEventId,
-            "matches"
-          ),
-          {
-            name,
-            type,
-            order: orderNumber,
-            createdAt: new Date().toISOString()
           }
-        );
+        ));
 
-        document.getElementById(
-          "match-name"
-        ).value = "";
-
-        document.getElementById(
-          "match-type"
-        ).value = "";
-
-        document.getElementById(
-          "match-order"
-        ).value = "";
-
-        await loadMatches(selectedEventId);
-
-        alert("Match added successfully!");
-
-      } catch (error) {
-        console.error(
-          "Match booking failed:",
-          error
-        );
-
-        alert(
-          "Unable to add match: " + error.message
-        );
+        card.appendChild(controls);
       }
+
+      list.appendChild(card);
     });
 
-    // CREATE EVENT
-    document.getElementById(
-      "create-event-btn"
-    ).addEventListener("click", async () => {
-      const title = document.getElementById(
-        "event-title"
-      ).value.trim();
+  } catch (error) {
+    console.error("Match loading failed:", error);
+    list.textContent = "Unable to load matches.";
+  }
+}
 
-      const type = document.getElementById(
-        "event-type"
-      ).value.trim();
+async function moveMatch(eventId, matchId, direction) {
+  if (!isAdmin || reorderingMatches) return;
 
-      const date = document.getElementById(
-        "event-date"
-      ).value;
+  reorderingMatches = true;
 
-      const location = document.getElementById(
-        "event-location"
-      ).value.trim();
+  try {
+    const snapshot = await getDocs(
+      collection(db, "events", eventId, "matches")
+    );
 
-      const description = document.getElementById(
-        "event-description"
-      ).value.trim();
+    const matches = sortMatches(snapshot.docs);
+    const index = matches.findIndex(
+      item => item.id === matchId
+    );
+    const target = index + direction;
 
-      if (!title || !type || !date) {
-        alert(
-          "Please enter an event name, type, and date."
-        );
-        return;
-      }
+    if (index < 0 || target < 0 ||
+        target >= matches.length) return;
 
-      const user = auth.currentUser;
+    [matches[index], matches[target]] =
+      [matches[target], matches[index]];
 
-      if (!user) {
-        alert(
-          "Please sign in before creating an event."
-        );
-        return;
-      }
+    // Firestore batches are limited, so save in chunks.
+    for (let start = 0; start < matches.length; start += 400) {
+      const batch = writeBatch(db);
 
-      try {
-        const profile = await getDoc(
-          doc(db, "users", user.uid)
-        );
+      matches.slice(start, start + 400).forEach(
+        (matchDoc, offset) => {
+          const i = start + offset;
 
-        if (
-          !profile.exists() ||
-          profile.data().active !== true ||
-          profile.data().role !== "admin"
-        ) {
-          alert(
-            "Only an active admin can create events."
+          batch.update(
+            doc(db, "events", eventId,
+                "matches", matchDoc.id),
+            { order: matches.length - i }
           );
-          return;
         }
+      );
 
-        await addDoc(collection(db, "events"), {
-          title,
-          type,
-          date,
-          location,
-          description,
-          authorUid: user.uid,
-          publicationStatus: "draft"
-        });
+      await batch.commit();
+    }
 
-        alert(
-          "Event draft created successfully!"
-        );
+    await loadMatches(eventId);
 
-        await loadDrafts();
+  } catch (error) {
+    alert("Unable to reorder matches: " + error.message);
+    await loadMatches(eventId);
+  } finally {
+    reorderingMatches = false;
+  }
+}
 
-      } catch (error) {
-        console.error(
-          "Event creation failed:",
-          error
-        );
+async function changePublicationStatus(newStatus) {
+  if (!isAdmin || !selectedEventId || savingStatus) return;
 
-        alert(
-          "Unable to create event: " + error.message
-        );
-      }
+  const eventId = selectedEventId;
+  const action = newStatus === "published"
+    ? "publish"
+    : "unpublish";
+
+  if (!confirm(
+    `Are you sure you want to ${action} this event?`
+  )) return;
+
+  savingStatus = true;
+
+  try {
+    await updateDoc(doc(db, "events", eventId), {
+      publicationStatus: newStatus
     });
 
-    loadEvents();
-  </script>
+    selectedEventStatus = newStatus;
+    updateManagementControls();
+
+    await Promise.all([
+      loadEvents(),
+      loadDrafts()
+    ]);
+
+    alert(
+      newStatus === "published"
+        ? "Event published successfully!"
+        : "Event returned to drafts!"
+    );
+
+  } catch (error) {
+    alert(
+      "Unable to change event status: " + error.message
+    );
+  } finally {
+    savingStatus = false;
+  }
+}
+
+el("publish-event-btn").addEventListener(
+  "click",
+  () => changePublicationStatus("published")
+);
+
+el("unpublish-event-btn").addEventListener(
+  "click",
+  () => changePublicationStatus("draft")
+);
+
+el("add-match-btn").addEventListener(
+  "click",
+  async () => {
+    if (!isAdmin || !selectedEventId) {
+      alert("Select an event as an admin first.");
+      return;
+    }
+
+    const name = el("match-name").value.trim();
+    const type = el("match-type").value.trim();
+    const orderInput = el("match-order").value.trim();
+    const order = Number(orderInput);
+
+    if (!name || !type ||
+        orderInput === "" ||
+        !Number.isSafeInteger(order) ||
+        order < 1) {
+      alert("Enter a valid name, type, and match order.");
+      return;
+    }
+
+    try {
+      await addDoc(
+        collection(db, "events",
+                   selectedEventId, "matches"),
+        {
+          name,
+          type,
+          order,
+          createdAt: new Date().toISOString()
+        }
+      );
+
+      el("match-name").value = "";
+      el("match-type").value = "";
+      el("match-order").value = "";
+
+      await loadMatches(selectedEventId);
+      alert("Match added successfully!");
+
+    } catch (error) {
+      alert("Unable to add match: " + error.message);
+    }
+  }
+);
+
+el("create-event-btn").addEventListener(
+  "click",
+  async () => {
+    if (!isAdmin || !auth.currentUser) {
+      alert("Only active admins can create events.");
+      return;
+    }
+
+    const title = el("event-title").value.trim();
+    const type = el("event-type").value.trim();
+    const date = el("event-date").value;
+    const location = el("event-location").value.trim();
+    const description =
+      el("event-description").value.trim();
+
+    if (!title || !type || !date) {
+      alert("Enter an event name, type, and date.");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "events"), {
+        title,
+        type,
+        date,
+        location,
+        description,
+        authorUid: auth.currentUser.uid,
+        publicationStatus: "draft"
+      });
+
+      el("event-title").value = "";
+      el("event-type").value = "";
+      el("event-date").value = "";
+      el("event-location").value = "";
+      el("event-description").value = "";
+
+      await loadDrafts();
+      alert("Event draft created successfully!");
+
+    } catch (error) {
+      alert("Unable to create event: " + error.message);
+    }
+  }
+);
+
+onAuthStateChanged(auth, async user => {
+  isAdmin = false;
+
+  el("event-admin").hidden = true;
+  el("event-drafts").hidden = true;
+
+  if (user) {
+    try {
+      const profile = await getDoc(
+        doc(db, "users", user.uid)
+      );
+
+      isAdmin = profile.exists() &&
+        profile.data().active === true &&
+        profile.data().role === "admin";
+
+    } catch (error) {
+      console.error("Admin verification failed:", error);
+    }
+  }
+
+  el("event-admin").hidden = !isAdmin;
+  el("event-drafts").hidden = !isAdmin;
+
+  // Clear private details when authentication changes.
+  selectedEventId = null;
+  selectedEventStatus = null;
+  el("event-details").hidden = true;
+
+  await loadEvents();
+
+  if (isAdmin) {
+    await loadDrafts();
+  }
+});
+</script>
 </body>
 </html>

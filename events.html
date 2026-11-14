@@ -5,227 +5,151 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MPW ENGAGED | Event Hub</title>
-
 <style>
 :root {
-  --gold: #c8a85b;
-  --purple: #281038;
-  --background: #0c0a10;
-  --card: #1b1424;
-  --text: #f6f0f7;
-  --muted: #c3b7c9;
+  --gold:#c8a85b;
+  --purple:#281038;
+  --background:#0c0a10;
+  --card:#1b1424;
+  --text:#f6f0f7;
+  --muted:#c3b7c9;
 }
-
-* {
-  box-sizing: border-box;
-}
-
+* {box-sizing:border-box}
 body {
-  margin: 0;
-  background: var(--background);
-  color: var(--text);
-  font-family: Arial, sans-serif;
+  margin:0;
+  background:var(--background);
+  color:var(--text);
+  font-family:Arial,sans-serif;
 }
-
 header {
-  background: var(--purple);
-  border-bottom: 2px solid var(--gold);
-  padding: 24px;
-  text-align: center;
+  background:var(--purple);
+  border-bottom:2px solid var(--gold);
+  padding:24px;
+  text-align:center;
 }
-
-h1 {
-  color: var(--gold);
-  margin-bottom: 8px;
+h1 {color:var(--gold);margin-bottom:8px}
+main {max-width:1000px;padding:24px;margin:auto}
+section {margin:30px 0}
+input,textarea {
+  background:#f6f0f7;
+  color:#17101b;
+  border:1px solid #aaa;
+  border-radius:5px;
+  padding:10px;
+  margin:5px;
+  max-width:100%;
 }
-
-main {
-  max-width: 1000px;
-  padding: 24px;
-  margin: auto;
-}
-
-section {
-  margin: 30px 0;
-}
-
-input, textarea {
-  background: #f6f0f7;
-  color: #17101b;
-  border: 1px solid #aaa;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 5px;
-  max-width: 100%;
-}
-
-textarea {
-  min-height: 75px;
-  vertical-align: top;
-}
-
+textarea {min-height:75px;vertical-align:top}
 button {
-  padding: 10px 14px;
-  margin: 4px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
+  padding:10px 14px;
+  margin:4px;
+  border-radius:5px;
+  cursor:pointer;
+  font-weight:bold;
 }
-
-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
+button:disabled {opacity:.4;cursor:not-allowed}
 .gold-button {
-  background: var(--gold);
-  color: #17101b;
-  border: none;
+  background:var(--gold);
+  color:#17101b;
+  border:none;
 }
-
 .purple-button {
-  background: #372047;
-  border: 1px solid var(--gold);
-  color: white;
+  background:#372047;
+  border:1px solid var(--gold);
+  color:white;
 }
-
 .danger-button {
-  background: #49212c;
-  border: 1px solid #a84a5a;
-  color: white;
+  background:#49212c;
+  border:1px solid #a84a5a;
+  color:white;
 }
-
-.event-card,
-.match-card,
-.account-card {
-  background: var(--card);
-  border: 1px solid #49345a;
-  border-left: 4px solid var(--gold);
-  border-radius: 8px;
-  padding: 16px;
-  margin: 12px 0;
+.event-card,.match-card,.account-card {
+  background:var(--card);
+  border:1px solid #49345a;
+  border-left:4px solid var(--gold);
+  border-radius:8px;
+  padding:16px;
+  margin:12px 0;
 }
-
-.event-card h3,
-.match-card h4 {
-  margin: 6px 0 10px;
+.event-card h3,.match-card h4 {margin:6px 0 10px}
+.position,.status {
+  color:var(--gold);
+  font-weight:bold;
+  font-size:13px;
 }
-
-.position,
-.status {
-  color: var(--gold);
-  font-weight: bold;
-  font-size: 13px;
-}
-
 .controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-top:12px;
 }
-
-.muted {
-  color: var(--muted);
+.muted {color:var(--muted)}
+.account-card {margin-top:0}
+.account-heading,.event-details-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  gap:10px;
 }
-
-.account-card {
-  margin-top: 0;
-}
-
-.account-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.account-heading h2 {
-  margin: 0;
-}
-
-.account-status {
-  color: var(--gold);
-  font-weight: bold;
-}
-
+.account-heading h2,.event-details-header h2 {margin:0}
+.account-status {color:var(--gold);font-weight:bold}
 #login-form {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 5px;
-  margin-top: 15px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:5px;
+  margin-top:15px;
 }
-
-#login-form input {
-  flex: 1;
-  min-width: 180px;
-}
-
-#auth-message {
-  margin: 10px 0 0;
-}
-
+#login-form input {flex:1;min-width:180px}
 #event-details {
-  border-top: 2px solid var(--gold);
-  padding-top: 20px;
+  border-top:2px solid var(--gold);
+  padding-top:20px;
 }
-
-.event-details-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 10px;
+#selected-event-matches {margin-top:15px}
+#event-edit-panel {
+  background:#21172b;
+  border:1px solid var(--gold);
+  border-radius:8px;
+  padding:18px;
+  margin:20px 0;
 }
-
-.event-details-header h2 {
-  margin-top: 0;
+#event-edit-form {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
-
-#selected-event-matches {
-  margin-top: 15px;
+#event-edit-form label {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  font-weight:bold;
+  font-size:14px;
 }
-
-[hidden] {
-  display: none !important;
+#event-edit-form input,
+#event-edit-form textarea {
+  width:100%;
+  margin:0;
 }
-
-@media (max-width: 600px) {
-  main {
-    padding: 14px;
-  }
-
-  header {
-    padding: 18px;
-  }
-
-  #login-form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  #login-form input,
-  #login-form button {
-    width: 100%;
-    margin: 4px 0;
+[hidden] {display:none!important}
+@media(max-width:600px) {
+  main {padding:14px}
+  header {padding:18px}
+  #login-form {flex-direction:column;align-items:stretch}
+  #login-form input,#login-form button {
+    width:100%;
+    margin:4px 0;
   }
 }
 </style>
 </head>
-
 <body>
-
 <header>
   <h1>MPW ENGAGED</h1>
   <p>SHOWS & MATCH CARDS</p>
 </header>
 
 <main>
-
-  <!-- ACCOUNT ACCESS -->
-
   <section class="account-card">
     <div class="account-heading">
       <h2>Account Access</h2>
@@ -239,1095 +163,822 @@ button:disabled {
         Sign in to manage MPW events.
         Public match cards are available without an account.
       </p>
-
       <form id="login-form">
-        <input
-          id="login-email"
-          type="email"
+        <input id="login-email" type="email"
           placeholder="Email Address"
-          autocomplete="username"
-          required
-        >
-
-        <input
-          id="login-password"
-          type="password"
+          autocomplete="username" required>
+        <input id="login-password" type="password"
           placeholder="Password"
-          autocomplete="current-password"
-          required
-        >
-
-        <button
-          id="sign-in-btn"
-          class="gold-button"
-          type="submit"
-        >
-          Sign In
-        </button>
+          autocomplete="current-password" required>
+        <button id="sign-in-btn" class="gold-button"
+          type="submit">Sign In</button>
       </form>
     </div>
 
     <div id="signed-in-panel" hidden>
       <p id="account-email" class="muted"></p>
-
-      <button
-        id="sign-out-btn"
-        class="purple-button"
-        type="button"
-      >
-        Sign Out
-      </button>
+      <button id="sign-out-btn" class="purple-button"
+        type="button">Sign Out</button>
     </div>
-
     <p id="auth-message" class="muted"></p>
   </section>
 
-  <!-- PUBLIC EVENT HUB -->
-
   <section>
     <h2>Event Hub</h2>
-    <p class="muted">
-      Official MPW shows and match cards
-    </p>
-
-    <div id="event-list">
-      Loading events...
-    </div>
+    <p class="muted">Official MPW shows and match cards</p>
+    <div id="event-list">Loading events...</div>
   </section>
-
-  <!-- ADMIN DRAFTS -->
 
   <section id="event-drafts" hidden>
     <h2>My Event Drafts</h2>
-
-    <div id="draft-list">
-      Loading drafts...
-    </div>
+    <div id="draft-list">Loading drafts...</div>
   </section>
 
-  <!-- SELECTED EVENT -->
-
   <section id="event-details" hidden>
-
     <div class="event-details-header">
-      <h2 id="selected-event-title">
-        Event Details
-      </h2>
-
-      <button
-        id="close-event-btn"
-        class="purple-button"
-        type="button"
-      >
-        ✕ Close Match Card
-      </button>
+      <h2 id="selected-event-title">Event Details</h2>
+      <button id="close-event-btn" class="purple-button"
+        type="button">✕ Close Match Card</button>
     </div>
 
     <p id="selected-event-info"></p>
+    <p id="selected-event-description" class="muted"></p>
     <p id="selected-event-status" class="status"></p>
 
-    <div id="publishing-controls" hidden>
-      <button
-        id="publish-event-btn"
-        class="gold-button"
-        type="button"
-      >
-        Publish Event
-      </button>
+    <div id="event-management-controls" hidden>
+      <button id="edit-event-btn" class="gold-button"
+        type="button">Edit Event</button>
+      <button id="delete-event-btn" class="danger-button"
+        type="button">Delete Event</button>
+    </div>
 
-      <button
-        id="unpublish-event-btn"
-        class="purple-button"
-        type="button"
-        hidden
-      >
-        Unpublish Event
-      </button>
+    <div id="event-edit-panel" hidden>
+      <h3>Edit Event Information</h3>
+      <form id="event-edit-form">
+        <label>Event Name
+          <input id="edit-event-title" required>
+        </label>
+        <label>Event Type
+          <input id="edit-event-type" required>
+        </label>
+        <label>Event Date
+          <input id="edit-event-date" type="date" required>
+        </label>
+        <label>Event Location
+          <input id="edit-event-location">
+        </label>
+        <label>Event Description
+          <textarea id="edit-event-description"></textarea>
+        </label>
+        <div class="controls">
+          <button id="save-event-btn" class="gold-button"
+            type="submit">Save Changes</button>
+          <button id="cancel-event-edit-btn"
+            class="purple-button" type="button">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="publishing-controls" hidden>
+      <button id="publish-event-btn" class="gold-button"
+        type="button">Publish Event</button>
+      <button id="unpublish-event-btn" class="purple-button"
+        type="button" hidden>Unpublish Event</button>
     </div>
 
     <h3>Match Card</h3>
-
     <div id="selected-event-matches">
       No matches added yet.
     </div>
 
     <div id="match-booking-section" hidden>
       <h3>Book a Match</h3>
-
-      <input
-        id="match-name"
-        type="text"
-        placeholder="Match Name"
-      >
-
-      <input
-        id="match-type"
-        type="text"
-        placeholder="Match Type"
-      >
-
-      <input
-        id="match-order"
-        type="number"
-        min="1"
-        placeholder="Match Order (1 = Opener)"
-      >
-
-      <button
-        id="add-match-btn"
-        class="gold-button"
-        type="button"
-      >
-        Add Match
-      </button>
+      <input id="match-name" placeholder="Match Name">
+      <input id="match-type" placeholder="Match Type">
+      <input id="match-order" type="number" min="1"
+        placeholder="Match Order (1 = Opener)">
+      <button id="add-match-btn" class="gold-button"
+        type="button">Add Match</button>
     </div>
   </section>
 
-  <!-- CREATE EVENT -->
-
   <section id="event-admin" hidden>
     <h2>Create Event</h2>
-
-    <input
-      id="event-title"
-      type="text"
-      placeholder="Event Name"
-    >
-
-    <input
-      id="event-type"
-      type="text"
-      placeholder="Event Type (Engage, PLE, etc.)"
-    >
-
-    <input
-      id="event-date"
-      type="date"
-    >
-
-    <input
-      id="event-location"
-      type="text"
-      placeholder="Event Location"
-    >
-
-    <textarea
-      id="event-description"
-      placeholder="Event Description"
-    ></textarea>
-
-    <button
-      id="create-event-btn"
-      class="gold-button"
-      type="button"
-    >
-      Create Event
-    </button>
+    <input id="event-title" placeholder="Event Name">
+    <input id="event-type"
+      placeholder="Event Type (Engage, PLE, etc.)">
+    <input id="event-date" type="date">
+    <input id="event-location"
+      placeholder="Event Location">
+    <textarea id="event-description"
+      placeholder="Event Description"></textarea>
+    <button id="create-event-btn" class="gold-button"
+      type="button">Create Event</button>
   </section>
-
 </main>
 
 <script type="module">
-
-import { initializeApp } from
-  "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-  doc,
-  getDoc,
-  deleteDoc,
-  updateDoc,
-  writeBatch
-} from
-  "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {initializeApp} from
+"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
 import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut
+  getFirestore,collection,query,where,getDocs,
+  addDoc,doc,getDoc,deleteDoc,updateDoc,writeBatch
 } from
-  "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+import {
+  getAuth,onAuthStateChanged,
+  signInWithEmailAndPassword,signOut
+} from
+"https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA",
-  authDomain: "mpw-engaged.firebaseapp.com",
-  projectId: "mpw-engaged",
-  storageBucket: "mpw-engaged.firebasestorage.app",
-  messagingSenderId: "133272625859",
-  appId: "1:133272625859:web:d1e09eaf1b4613172a7876"
+  apiKey:"AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA",
+  authDomain:"mpw-engaged.firebaseapp.com",
+  projectId:"mpw-engaged",
+  storageBucket:"mpw-engaged.firebasestorage.app",
+  messagingSenderId:"133272625859",
+  appId:"1:133272625859:web:d1e09eaf1b4613172a7876"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
+const el=id=>document.getElementById(id);
 
-let selectedEventId = null;
-let selectedEventStatus = null;
-let isAdmin = false;
-let reorderingMatches = false;
-let savingStatus = false;
-let authVersion = 0;
-let eventViewVersion = 0;
-
-const el = id => document.getElementById(id);
+let selectedEventId=null;
+let selectedEventStatus=null;
+let selectedEventData=null;
+let isAdmin=false;
+let authVersion=0;
+let eventViewVersion=0;
+let reorderingMatches=false;
+let savingStatus=false;
+let deletingEvent=false;
 
 function setAuthMessage(message) {
-  el("auth-message").textContent = message;
+  el("auth-message").textContent=message;
 }
 
 function closeEvent() {
   eventViewVersion++;
-  selectedEventId = null;
-  selectedEventStatus = null;
-
-  el("event-details").hidden = true;
-  el("selected-event-matches").textContent = "";
+  selectedEventId=null;
+  selectedEventStatus=null;
+  selectedEventData=null;
+  el("event-details").hidden=true;
+  el("event-edit-panel").hidden=true;
+  el("selected-event-matches").textContent="";
 }
 
-el("close-event-btn").addEventListener(
-  "click",
-  () => closeEvent()
-);
+el("close-event-btn").onclick=closeEvent;
 
 function sortMatches(docs) {
-  return [...docs].sort((a, b) => {
-    const difference =
-      (Number(b.data().order) || 0) -
-      (Number(a.data().order) || 0);
-
-    if (difference) return difference;
-
-    const aDate = a.data().createdAt || "";
-    const bDate = b.data().createdAt || "";
-
-    return aDate.localeCompare(bDate) ||
+  return [...docs].sort((a,b)=>{
+    const difference=
+      (Number(b.data().order)||0)-
+      (Number(a.data().order)||0);
+    if(difference)return difference;
+    const aDate=a.data().createdAt||"";
+    const bDate=b.data().createdAt||"";
+    return aDate.localeCompare(bDate)||
       a.id.localeCompare(b.id);
   });
 }
 
-function makeButton(text, className, action) {
-  const button = document.createElement("button");
-
-  button.textContent = text;
-  button.className = className;
-  button.type = "button";
-
-  button.addEventListener("click", action);
-
+function makeButton(text,className,action) {
+  const button=document.createElement("button");
+  button.textContent=text;
+  button.className=className;
+  button.type="button";
+  button.addEventListener("click",action);
   return button;
 }
 
+function renderEventDetails() {
+  if(!selectedEventData)return;
+  const event=selectedEventData;
+  el("selected-event-title").textContent=
+    event.title||"Untitled Event";
+  el("selected-event-info").textContent=
+    `${event.type||"Event"} | `+
+    `${event.date||"Date TBD"} | `+
+    `${event.location||"Location TBD"}`;
+  el("selected-event-description").textContent=
+    event.description||"";
+  el("selected-event-status").textContent=
+    selectedEventStatus==="published"
+      ?"PUBLISHED — Official MPW Event"
+      :"DRAFT — Not Publicly Announced";
+  updateManagementControls();
+}
+
 function updateManagementControls() {
-  const canManage = isAdmin &&
-    selectedEventId !== null;
-
-  el("publishing-controls").hidden = !canManage;
-  el("match-booking-section").hidden = !canManage;
-
-  el("publish-event-btn").hidden =
-    !canManage || selectedEventStatus !== "draft";
-
-  el("unpublish-event-btn").hidden =
-    !canManage || selectedEventStatus !== "published";
-
-  el("selected-event-status").textContent =
-    selectedEventStatus === "published"
-      ? "PUBLISHED — Official MPW Event"
-      : "DRAFT — Not Publicly Announced";
+  const canManage=isAdmin&&selectedEventId!==null;
+  el("event-management-controls").hidden=!canManage;
+  el("publishing-controls").hidden=!canManage;
+  el("match-booking-section").hidden=!canManage;
+  el("publish-event-btn").hidden=
+    !canManage||selectedEventStatus!=="draft";
+  el("unpublish-event-btn").hidden=
+    !canManage||selectedEventStatus!=="published";
 }
 
 async function openEvent(eventId) {
-  const viewVersion = ++eventViewVersion;
-
-  selectedEventId = eventId;
-  selectedEventStatus = null;
-
-  el("event-details").hidden = false;
-  el("publishing-controls").hidden = true;
-  el("match-booking-section").hidden = true;
-  el("selected-event-title").textContent =
-    "Loading event...";
-  el("selected-event-matches").textContent = "";
+  const version=++eventViewVersion;
+  selectedEventId=eventId;
+  selectedEventStatus=null;
+  selectedEventData=null;
+  el("event-details").hidden=false;
+  el("event-edit-panel").hidden=true;
+  el("event-management-controls").hidden=true;
+  el("publishing-controls").hidden=true;
+  el("match-booking-section").hidden=true;
+  el("selected-event-title").textContent="Loading event...";
+  el("selected-event-matches").textContent="";
 
   try {
-    const snapshot = await getDoc(
-      doc(db, "events", eventId)
-    );
+    const snapshot=await getDoc(doc(db,"events",eventId));
+    if(version!==eventViewVersion)return;
+    if(!snapshot.exists())throw Error("Event not found.");
 
-    if (
-      viewVersion !== eventViewVersion ||
-      selectedEventId !== eventId
-    ) return;
-
-    if (!snapshot.exists()) {
-      throw new Error("Event not found.");
+    const event=snapshot.data();
+    if(event.publicationStatus!=="published"&&!isAdmin) {
+      throw Error("This event is not public.");
     }
 
-    const event = snapshot.data();
-
-    if (
-      event.publicationStatus !== "published" &&
-      !isAdmin
-    ) {
-      throw new Error("This event is not public.");
-    }
-
-    selectedEventStatus = event.publicationStatus;
-
-    el("selected-event-title").textContent =
-      event.title || "Untitled Event";
-
-    el("selected-event-info").textContent =
-      `${event.type || "Event"} | ` +
-      `${event.date || "Date TBD"} | ` +
-      `${event.location || "Location TBD"}`;
-
-    updateManagementControls();
-
+    selectedEventData=event;
+    selectedEventStatus=event.publicationStatus;
+    renderEventDetails();
     await loadMatches(eventId);
 
-    if (viewVersion !== eventViewVersion) return;
-
-    el("event-details").scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-  } catch (error) {
-    if (viewVersion !== eventViewVersion) return;
-
-    console.error("Opening event failed:", error);
+    if(version===eventViewVersion) {
+      el("event-details").scrollIntoView({
+        behavior:"smooth",block:"start"
+      });
+    }
+  } catch(error) {
+    if(version!==eventViewVersion)return;
     closeEvent();
-
-    alert("Unable to open event: " + error.message);
+    alert("Unable to open event: "+error.message);
   }
 }
 
-function makeEventCard(eventDoc, isDraft = false) {
-  const event = eventDoc.data();
+function makeEventCard(eventDoc,isDraft=false) {
+  const event=eventDoc.data();
+  const card=document.createElement("article");
+  card.className="event-card";
 
-  const card = document.createElement("article");
-  card.className = "event-card";
-
-  const heading = document.createElement("h3");
-  heading.textContent = event.title || "Untitled Event";
+  const heading=document.createElement("h3");
+  heading.textContent=event.title||"Untitled Event";
   card.appendChild(heading);
 
-  const info = document.createElement("p");
-  info.textContent =
-    `${event.type || "Event"} | ` +
-    `${event.date || "Date TBD"} | ` +
-    `${event.location || "Location TBD"}`;
-
+  const info=document.createElement("p");
+  info.textContent=
+    `${event.type||"Event"} | `+
+    `${event.date||"Date TBD"} | `+
+    `${event.location||"Location TBD"}`;
   card.appendChild(info);
 
-  const status = document.createElement("p");
-  status.className = "status";
-  status.textContent = isDraft ? "DRAFT" : "PUBLISHED";
+  const status=document.createElement("p");
+  status.className="status";
+  status.textContent=isDraft?"DRAFT":"PUBLISHED";
   card.appendChild(status);
 
   card.appendChild(makeButton(
-    isAdmin ? "Manage Event" : "View Match Card",
-    "gold-button",
-    () => openEvent(eventDoc.id)
+    isAdmin?"Manage Event":"View Match Card",
+    "gold-button",()=>openEvent(eventDoc.id)
   ));
-
   return card;
 }
 
 async function loadEvents() {
-  const version = authVersion;
-  const eventList = el("event-list");
-
-  eventList.textContent = "Loading events...";
-
+  const version=authVersion;
+  const list=el("event-list");
+  list.textContent="Loading events...";
   try {
-    const snapshot = await getDocs(query(
-      collection(db, "events"),
-      where("publicationStatus", "==", "published")
+    const snapshot=await getDocs(query(
+      collection(db,"events"),
+      where("publicationStatus","==","published")
     ));
-
-    if (version !== authVersion) return;
-
-    eventList.textContent = "";
-
-    if (snapshot.empty) {
-      eventList.textContent = "No published events yet.";
+    if(version!==authVersion)return;
+    list.textContent="";
+    if(snapshot.empty) {
+      list.textContent="No published events yet.";
       return;
     }
-
-    snapshot.forEach(eventDoc => {
-      eventList.appendChild(makeEventCard(eventDoc));
+    snapshot.forEach(item=>{
+      list.appendChild(makeEventCard(item));
     });
-
-  } catch (error) {
-    if (version !== authVersion) return;
-
-    console.error("Event loading failed:", error);
-    eventList.textContent = "Unable to load events.";
+  } catch(error) {
+    if(version!==authVersion)return;
+    console.error(error);
+    list.textContent="Unable to load events.";
   }
 }
 
 async function loadDrafts() {
-  if (!isAdmin) return;
-
-  const version = authVersion;
-  const draftList = el("draft-list");
-
-  draftList.textContent = "Loading drafts...";
-
+  if(!isAdmin)return;
+  const version=authVersion;
+  const list=el("draft-list");
+  list.textContent="Loading drafts...";
   try {
-    const snapshot = await getDocs(query(
-      collection(db, "events"),
-      where("publicationStatus", "==", "draft")
+    const snapshot=await getDocs(query(
+      collection(db,"events"),
+      where("publicationStatus","==","draft")
     ));
-
-    if (version !== authVersion || !isAdmin) return;
-
-    draftList.textContent = "";
-
-    if (snapshot.empty) {
-      draftList.textContent = "No event drafts yet.";
+    if(version!==authVersion||!isAdmin)return;
+    list.textContent="";
+    if(snapshot.empty) {
+      list.textContent="No event drafts yet.";
       return;
     }
-
-    snapshot.forEach(eventDoc => {
-      draftList.appendChild(
-        makeEventCard(eventDoc, true)
-      );
+    snapshot.forEach(item=>{
+      list.appendChild(makeEventCard(item,true));
     });
-
-  } catch (error) {
-    if (version !== authVersion) return;
-
-    console.error("Draft loading failed:", error);
-    draftList.textContent = "Unable to load drafts.";
+  } catch(error) {
+    if(version!==authVersion)return;
+    console.error(error);
+    list.textContent="Unable to load drafts.";
   }
+}
+
+async function refreshEventLists() {
+  await Promise.all([loadEvents(),loadDrafts()]);
 }
 
 async function loadMatches(eventId) {
-  const viewVersion = eventViewVersion;
-  const list = el("selected-event-matches");
-
-  list.textContent = "Loading matches...";
-
+  const version=eventViewVersion;
+  const list=el("selected-event-matches");
+  list.textContent="Loading matches...";
   try {
-    const snapshot = await getDocs(
-      collection(db, "events", eventId, "matches")
+    const snapshot=await getDocs(
+      collection(db,"events",eventId,"matches")
     );
+    if(version!==eventViewVersion||
+       selectedEventId!==eventId)return;
 
-    if (
-      selectedEventId !== eventId ||
-      viewVersion !== eventViewVersion
-    ) return;
-
-    const matches = sortMatches(snapshot.docs);
-    list.textContent = "";
-
-    if (!matches.length) {
-      list.textContent = "No matches added yet.";
+    const matches=sortMatches(snapshot.docs);
+    list.textContent="";
+    if(!matches.length) {
+      list.textContent="No matches added yet.";
       return;
     }
 
-    matches.forEach((matchDoc, index) => {
-      const match = matchDoc.data();
+    matches.forEach((matchDoc,index)=>{
+      const match=matchDoc.data();
+      const card=document.createElement("article");
+      card.className="match-card";
+      const position=document.createElement("p");
+      position.className="position";
 
-      const card = document.createElement("article");
-      card.className = "match-card";
+      const order=Number(match.order);
+      const validOrder=
+        Number.isSafeInteger(order)&&order>=1;
+      const label=index===0&&matches.length>1
+        ?"MAIN EVENT"
+        :index===matches.length-1&&matches.length>1
+          ?"OPENER":"MATCH";
 
-      const position = document.createElement("p");
-      position.className = "position";
-
-      const order = Number(match.order);
-      const validOrder =
-        Number.isSafeInteger(order) && order >= 1;
-
-      const label =
-        index === 0 && matches.length > 1
-          ? "MAIN EVENT"
-          : index === matches.length - 1 &&
-            matches.length > 1
-            ? "OPENER"
-            : "MATCH";
-
-      position.textContent =
-        label + " — " +
-        (
-          validOrder
-            ? "MATCH " + order
-            : "ORDER NOT ASSIGNED"
-        );
-
+      position.textContent=label+" — "+
+        (validOrder?"MATCH "+order:"ORDER NOT ASSIGNED");
       card.appendChild(position);
 
-      const heading = document.createElement("h4");
-      heading.textContent =
-        match.name || "Unnamed Match";
-
+      const heading=document.createElement("h4");
+      heading.textContent=match.name||"Unnamed Match";
       card.appendChild(heading);
 
-      const type = document.createElement("p");
-      type.textContent =
-        match.type || "Standard Match";
-
+      const type=document.createElement("p");
+      type.textContent=match.type||"Standard Match";
       card.appendChild(type);
 
-      if (isAdmin) {
-        const controls = document.createElement("div");
-        controls.className = "controls";
+      if(isAdmin) {
+        const controls=document.createElement("div");
+        controls.className="controls";
 
-        const up = makeButton(
-          "↑ Move Up",
-          "purple-button",
-          () => moveMatch(eventId, matchDoc.id, -1)
-        );
-
-        up.disabled = index === 0;
+        const up=makeButton("↑ Move Up","purple-button",
+          ()=>moveMatch(eventId,matchDoc.id,-1));
+        up.disabled=index===0;
         controls.appendChild(up);
 
-        const down = makeButton(
-          "↓ Move Down",
-          "purple-button",
-          () => moveMatch(eventId, matchDoc.id, 1)
-        );
-
-        down.disabled =
-          index === matches.length - 1;
-
+        const down=makeButton("↓ Move Down","purple-button",
+          ()=>moveMatch(eventId,matchDoc.id,1));
+        down.disabled=index===matches.length-1;
         controls.appendChild(down);
 
         controls.appendChild(makeButton(
-          "Edit Match",
-          "gold-button",
-          async () => {
-            if (!isAdmin) return;
-
-            const name = prompt(
-              "Edit Match Name:",
-              match.name || ""
-            );
-
-            if (name === null) return;
-
-            const type = prompt(
-              "Edit Match Type:",
-              match.type || ""
-            );
-
-            if (type === null) return;
-
-            const orderInput = prompt(
+          "Edit Match","gold-button",async()=>{
+            if(!isAdmin)return;
+            const name=prompt("Edit Match Name:",match.name||"");
+            if(name===null)return;
+            const type=prompt("Edit Match Type:",match.type||"");
+            if(type===null)return;
+            const orderInput=prompt(
               "Match Order (1 = Opener):",
-              validOrder ? String(order) : ""
+              validOrder?String(order):""
             );
-
-            if (orderInput === null) return;
-
-            const newOrder =
-              Number(orderInput.trim());
-
-            if (
-              !name.trim() ||
-              !type.trim() ||
-              orderInput.trim() === "" ||
-              !Number.isSafeInteger(newOrder) ||
-              newOrder < 1
-            ) {
-              alert(
-                "Enter a valid name, type, and match order."
-              );
+            if(orderInput===null)return;
+            const newOrder=Number(orderInput.trim());
+            if(!name.trim()||!type.trim()||
+              !orderInput.trim()||
+              !Number.isSafeInteger(newOrder)||
+              newOrder<1) {
+              alert("Enter a valid name, type, and order.");
               return;
             }
-
             try {
-              await updateDoc(
-                doc(
-                  db,
-                  "events",
-                  eventId,
-                  "matches",
-                  matchDoc.id
-                ),
-                {
-                  name: name.trim(),
-                  type: type.trim(),
-                  order: newOrder
-                }
-              );
-
+              await updateDoc(doc(db,"events",eventId,
+                "matches",matchDoc.id),{
+                name:name.trim(),
+                type:type.trim(),
+                order:newOrder
+              });
               await loadMatches(eventId);
-
-              alert("Match updated successfully!");
-
-            } catch (error) {
-              alert(
-                "Unable to update match: " +
-                error.message
-              );
+            } catch(error) {
+              alert("Unable to update match: "+error.message);
             }
           }
         ));
 
         controls.appendChild(makeButton(
-          "Delete Match",
-          "danger-button",
-          async () => {
-            if (!isAdmin) return;
-
-            if (!confirm("Delete this match?")) return;
-
+          "Delete Match","danger-button",async()=>{
+            if(!isAdmin||!confirm("Delete this match?"))return;
             try {
-              await deleteDoc(
-                doc(
-                  db,
-                  "events",
-                  eventId,
-                  "matches",
-                  matchDoc.id
-                )
-              );
-
+              await deleteDoc(doc(db,"events",eventId,
+                "matches",matchDoc.id));
               await loadMatches(eventId);
-
-            } catch (error) {
-              alert(
-                "Unable to delete match: " +
-                error.message
-              );
+            } catch(error) {
+              alert("Unable to delete match: "+error.message);
             }
           }
         ));
-
         card.appendChild(controls);
       }
-
       list.appendChild(card);
     });
-
-  } catch (error) {
-    if (viewVersion !== eventViewVersion) return;
-
-    console.error("Match loading failed:", error);
-    list.textContent = "Unable to load matches.";
+  } catch(error) {
+    if(version!==eventViewVersion)return;
+    console.error(error);
+    list.textContent="Unable to load matches.";
   }
 }
 
-async function moveMatch(eventId, matchId, direction) {
-  if (!isAdmin || reorderingMatches) return;
-
-  reorderingMatches = true;
-
+async function moveMatch(eventId,matchId,direction) {
+  if(!isAdmin||reorderingMatches)return;
+  reorderingMatches=true;
   try {
-    const snapshot = await getDocs(
-      collection(db, "events", eventId, "matches")
+    const snapshot=await getDocs(
+      collection(db,"events",eventId,"matches")
     );
+    const matches=sortMatches(snapshot.docs);
+    const index=matches.findIndex(item=>item.id===matchId);
+    const target=index+direction;
+    if(index<0||target<0||target>=matches.length)return;
 
-    const matches = sortMatches(snapshot.docs);
+    [matches[index],matches[target]]=
+      [matches[target],matches[index]];
 
-    const index = matches.findIndex(
-      item => item.id === matchId
-    );
-
-    const target = index + direction;
-
-    if (
-      index < 0 ||
-      target < 0 ||
-      target >= matches.length
-    ) return;
-
-    [matches[index], matches[target]] =
-      [matches[target], matches[index]];
-
-    for (
-      let start = 0;
-      start < matches.length;
-      start += 400
-    ) {
-      const batch = writeBatch(db);
-
-      matches.slice(
-        start,
-        start + 400
-      ).forEach((matchDoc, offset) => {
-        const i = start + offset;
-
-        batch.update(
-          doc(
-            db,
-            "events",
-            eventId,
-            "matches",
-            matchDoc.id
-          ),
-          {
-            order: matches.length - i
-          }
-        );
+    for(let start=0;start<matches.length;start+=400) {
+      const batch=writeBatch(db);
+      matches.slice(start,start+400).forEach((item,offset)=>{
+        batch.update(doc(db,"events",eventId,
+          "matches",item.id),{
+          order:matches.length-(start+offset)
+        });
       });
-
       await batch.commit();
     }
-
     await loadMatches(eventId);
-
-  } catch (error) {
-    alert(
-      "Unable to reorder matches: " +
-      error.message
-    );
-
+  } catch(error) {
+    alert("Unable to reorder matches: "+error.message);
     await loadMatches(eventId);
-
   } finally {
-    reorderingMatches = false;
+    reorderingMatches=false;
   }
 }
 
-async function changePublicationStatus(newStatus) {
-  if (
-    !isAdmin ||
-    !selectedEventId ||
-    savingStatus
-  ) return;
+// EVENT EDITING
 
-  const eventId = selectedEventId;
+el("edit-event-btn").onclick=()=>{
+  if(!isAdmin||!selectedEventData)return;
+  const event=selectedEventData;
+  el("edit-event-title").value=event.title||"";
+  el("edit-event-type").value=event.type||"";
+  el("edit-event-date").value=event.date||"";
+  el("edit-event-location").value=event.location||"";
+  el("edit-event-description").value=event.description||"";
+  el("event-edit-panel").hidden=false;
+  el("event-edit-panel").scrollIntoView({
+    behavior:"smooth",block:"nearest"
+  });
+};
 
-  const action =
-    newStatus === "published"
-      ? "publish"
-      : "unpublish";
+el("cancel-event-edit-btn").onclick=()=>{
+  el("event-edit-panel").hidden=true;
+};
 
-  if (!confirm(
-    `Are you sure you want to ${action} this event?`
-  )) return;
+el("event-edit-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!isAdmin||!selectedEventId)return;
 
-  savingStatus = true;
+  const eventId=selectedEventId;
+  const version=eventViewVersion;
+  const title=el("edit-event-title").value.trim();
+  const type=el("edit-event-type").value.trim();
+  const date=el("edit-event-date").value;
+  const location=el("edit-event-location").value.trim();
+  const description=
+    el("edit-event-description").value.trim();
 
+  if(!title||!type||!date) {
+    alert("Event name, type, and date are required.");
+    return;
+  }
+
+  const button=el("save-event-btn");
+  button.disabled=true;
   try {
-    await updateDoc(
-      doc(db, "events", eventId),
-      {
-        publicationStatus: newStatus
-      }
-    );
+    const changes={title,type,date,location,description};
+    await updateDoc(doc(db,"events",eventId),changes);
 
-    selectedEventStatus = newStatus;
-    updateManagementControls();
-
-    await Promise.all([
-      loadEvents(),
-      loadDrafts()
-    ]);
-
-    alert(
-      newStatus === "published"
-        ? "Event published successfully!"
-        : "Event returned to drafts!"
-    );
-
-  } catch (error) {
-    alert(
-      "Unable to change event status: " +
-      error.message
-    );
-
+    if(version===eventViewVersion&&
+       selectedEventId===eventId) {
+      selectedEventData={...selectedEventData,...changes};
+      renderEventDetails();
+      el("event-edit-panel").hidden=true;
+    }
+    await refreshEventLists();
+    alert("Event information updated successfully!");
+  } catch(error) {
+    alert("Unable to save event: "+error.message);
   } finally {
-    savingStatus = false;
-  }
-}
-
-el("publish-event-btn").addEventListener(
-  "click",
-  () => changePublicationStatus("published")
-);
-
-el("unpublish-event-btn").addEventListener(
-  "click",
-  () => changePublicationStatus("draft")
-);
-
-el("add-match-btn").addEventListener(
-  "click",
-  async () => {
-    if (!isAdmin || !selectedEventId) {
-      alert("Select an event as an admin first.");
-      return;
-    }
-
-    const name = el("match-name").value.trim();
-    const type = el("match-type").value.trim();
-    const orderInput =
-      el("match-order").value.trim();
-
-    const order = Number(orderInput);
-
-    if (
-      !name ||
-      !type ||
-      orderInput === "" ||
-      !Number.isSafeInteger(order) ||
-      order < 1
-    ) {
-      alert(
-        "Enter a valid name, type, and match order."
-      );
-      return;
-    }
-
-    const eventId = selectedEventId;
-
-    try {
-      await addDoc(
-        collection(
-          db,
-          "events",
-          eventId,
-          "matches"
-        ),
-        {
-          name,
-          type,
-          order,
-          createdAt: new Date().toISOString()
-        }
-      );
-
-      el("match-name").value = "";
-      el("match-type").value = "";
-      el("match-order").value = "";
-
-      await loadMatches(eventId);
-
-      alert("Match added successfully!");
-
-    } catch (error) {
-      alert(
-        "Unable to add match: " +
-        error.message
-      );
-    }
-  }
-);
-
-el("create-event-btn").addEventListener(
-  "click",
-  async () => {
-    if (!isAdmin || !auth.currentUser) {
-      alert(
-        "Only active admins can create events."
-      );
-      return;
-    }
-
-    const title =
-      el("event-title").value.trim();
-
-    const type =
-      el("event-type").value.trim();
-
-    const date =
-      el("event-date").value;
-
-    const location =
-      el("event-location").value.trim();
-
-    const description =
-      el("event-description").value.trim();
-
-    if (!title || !type || !date) {
-      alert(
-        "Enter an event name, type, and date."
-      );
-      return;
-    }
-
-    try {
-      await addDoc(
-        collection(db, "events"),
-        {
-          title,
-          type,
-          date,
-          location,
-          description,
-          authorUid: auth.currentUser.uid,
-          publicationStatus: "draft"
-        }
-      );
-
-      el("event-title").value = "";
-      el("event-type").value = "";
-      el("event-date").value = "";
-      el("event-location").value = "";
-      el("event-description").value = "";
-
-      await loadDrafts();
-
-      alert(
-        "Event draft created successfully!"
-      );
-
-    } catch (error) {
-      alert(
-        "Unable to create event: " +
-        error.message
-      );
-    }
-  }
-);
-
-// SIGN IN
-
-el("login-form").addEventListener(
-  "submit",
-  async event => {
-    event.preventDefault();
-
-    const email =
-      el("login-email").value.trim();
-
-    const password =
-      el("login-password").value;
-
-    const button = el("sign-in-btn");
-
-    button.disabled = true;
-    setAuthMessage("Signing in...");
-
-    try {
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      el("login-password").value = "";
-      setAuthMessage("");
-
-    } catch (error) {
-      console.error("Sign-in failed:", error);
-
-      setAuthMessage(
-        "Unable to sign in. Check your email and password."
-      );
-
-    } finally {
-      button.disabled = false;
-    }
-  }
-);
-
-// SIGN OUT
-
-el("sign-out-btn").addEventListener(
-  "click",
-  async () => {
-    const button = el("sign-out-btn");
-
-    button.disabled = true;
-    setAuthMessage("Signing out...");
-
-    try {
-      await signOut(auth);
-      setAuthMessage("");
-
-    } catch (error) {
-      console.error("Sign-out failed:", error);
-
-      setAuthMessage(
-        "Unable to sign out: " +
-        error.message
-      );
-
-    } finally {
-      button.disabled = false;
-    }
-  }
-);
-
-// AUTHENTICATION STATE
-
-onAuthStateChanged(auth, async user => {
-  const version = ++authVersion;
-
-  isAdmin = false;
-  closeEvent();
-
-  el("event-admin").hidden = true;
-  el("event-drafts").hidden = true;
-  el("publishing-controls").hidden = true;
-  el("match-booking-section").hidden = true;
-
-  el("signed-out-panel").hidden = true;
-  el("signed-in-panel").hidden = true;
-
-  el("account-status").textContent =
-    "Checking account...";
-
-  if (user) {
-    try {
-      const profile = await getDoc(
-        doc(db, "users", user.uid)
-      );
-
-      if (version !== authVersion) return;
-
-      isAdmin =
-        profile.exists() &&
-        profile.data().active === true &&
-        profile.data().role === "admin";
-
-    } catch (error) {
-      if (version !== authVersion) return;
-
-      console.error(
-        "Admin verification failed:",
-        error
-      );
-    }
-  }
-
-  if (version !== authVersion) return;
-
-  if (user) {
-    el("signed-in-panel").hidden = false;
-
-    el("account-email").textContent =
-      user.email || "Signed-in account";
-
-    el("account-status").textContent =
-      isAdmin
-        ? "ADMINISTRATOR"
-        : "SIGNED IN";
-
-  } else {
-    el("signed-out-panel").hidden = false;
-
-    el("account-status").textContent =
-      "PUBLIC VISITOR";
-  }
-
-  el("event-admin").hidden = !isAdmin;
-  el("event-drafts").hidden = !isAdmin;
-
-  await loadEvents();
-
-  if (version !== authVersion) return;
-
-  if (isAdmin) {
-    await loadDrafts();
+    button.disabled=false;
   }
 });
 
-</script>
+// EVENT DELETION
+// Removes match documents before deleting the event.
+// This cannot be undone.
 
+el("delete-event-btn").onclick=async()=>{
+  if(!isAdmin||!selectedEventId||deletingEvent)return;
+
+  const eventId=selectedEventId;
+  const title=selectedEventData?.title||"Untitled Event";
+
+  if(!confirm(
+    `DELETE EVENT?\n\n${title}\n\n`+
+    "This will permanently delete the event and its matches. "+
+    "This action cannot be undone."
+  ))return;
+
+  const typed=prompt(
+    `To permanently delete "${title}", type DELETE:`
+  );
+  if(typed!=="DELETE") {
+    if(typed!==null)alert("Deletion cancelled.");
+    return;
+  }
+
+  deletingEvent=true;
+  const button=el("delete-event-btn");
+  button.disabled=true;
+
+  try {
+    // Delete matches in batches until none remain.
+    while(true) {
+      const snapshot=await getDocs(
+        collection(db,"events",eventId,"matches")
+      );
+      if(snapshot.empty)break;
+
+      for(let start=0;start<snapshot.docs.length;start+=400) {
+        const batch=writeBatch(db);
+        snapshot.docs.slice(start,start+400).forEach(item=>{
+          batch.delete(item.ref);
+        });
+        await batch.commit();
+      }
+    }
+
+    // Other subcollections are intentionally not deleted.
+    // Block deletion if private records or segments exist,
+    // to avoid leaving orphaned documents.
+    for(const subcollection of ["private","segments"]) {
+      const remaining=await getDocs(
+        collection(db,"events",eventId,subcollection)
+      );
+      if(!remaining.empty) {
+        throw Error(
+          `Event still has ${subcollection} records. `+
+          "Deletion stopped to protect those records."
+        );
+      }
+    }
+
+    await deleteDoc(doc(db,"events",eventId));
+    closeEvent();
+    await refreshEventLists();
+    alert("Event permanently deleted.");
+  } catch(error) {
+    alert(
+      "Event deletion was not completed: "+error.message+
+      "\nSome matches may already have been removed. "+
+      "Check the event before retrying."
+    );
+  } finally {
+    deletingEvent=false;
+    button.disabled=false;
+  }
+};
+
+// PUBLISH / UNPUBLISH
+
+async function changePublicationStatus(newStatus) {
+  if(!isAdmin||!selectedEventId||savingStatus)return;
+  const eventId=selectedEventId;
+  const action=newStatus==="published"?"publish":"unpublish";
+  if(!confirm(`Are you sure you want to ${action} this event?`))
+    return;
+
+  savingStatus=true;
+  try {
+    await updateDoc(doc(db,"events",eventId),{
+      publicationStatus:newStatus
+    });
+    if(selectedEventId===eventId) {
+      selectedEventStatus=newStatus;
+      selectedEventData={
+        ...selectedEventData,publicationStatus:newStatus
+      };
+      renderEventDetails();
+    }
+    await refreshEventLists();
+    alert(newStatus==="published"
+      ?"Event published successfully!"
+      :"Event returned to drafts!");
+  } catch(error) {
+    alert("Unable to change status: "+error.message);
+  } finally {
+    savingStatus=false;
+  }
+}
+
+el("publish-event-btn").onclick=
+  ()=>changePublicationStatus("published");
+el("unpublish-event-btn").onclick=
+  ()=>changePublicationStatus("draft");
+
+// BOOK MATCH
+
+el("add-match-btn").onclick=async()=>{
+  if(!isAdmin||!selectedEventId)return;
+  const name=el("match-name").value.trim();
+  const type=el("match-type").value.trim();
+  const orderInput=el("match-order").value.trim();
+  const order=Number(orderInput);
+
+  if(!name||!type||!orderInput||
+    !Number.isSafeInteger(order)||order<1) {
+    alert("Enter a valid name, type, and match order.");
+    return;
+  }
+  const eventId=selectedEventId;
+  try {
+    await addDoc(collection(db,"events",eventId,"matches"),{
+      name,type,order,createdAt:new Date().toISOString()
+    });
+    el("match-name").value="";
+    el("match-type").value="";
+    el("match-order").value="";
+    await loadMatches(eventId);
+    alert("Match added successfully!");
+  } catch(error) {
+    alert("Unable to add match: "+error.message);
+  }
+};
+
+// CREATE EVENT
+
+el("create-event-btn").onclick=async()=>{
+  if(!isAdmin||!auth.currentUser)return;
+  const title=el("event-title").value.trim();
+  const type=el("event-type").value.trim();
+  const date=el("event-date").value;
+  const location=el("event-location").value.trim();
+  const description=el("event-description").value.trim();
+
+  if(!title||!type||!date) {
+    alert("Enter an event name, type, and date.");
+    return;
+  }
+  try {
+    await addDoc(collection(db,"events"),{
+      title,type,date,location,description,
+      authorUid:auth.currentUser.uid,
+      publicationStatus:"draft"
+    });
+    for(const id of [
+      "event-title","event-type","event-date",
+      "event-location","event-description"
+    ])el(id).value="";
+    await loadDrafts();
+    alert("Event draft created successfully!");
+  } catch(error) {
+    alert("Unable to create event: "+error.message);
+  }
+};
+
+// LOGIN
+
+el("login-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const button=el("sign-in-btn");
+  button.disabled=true;
+  setAuthMessage("Signing in...");
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      el("login-email").value.trim(),
+      el("login-password").value
+    );
+    el("login-password").value="";
+    setAuthMessage("");
+  } catch(error) {
+    console.error(error);
+    setAuthMessage(
+      "Unable to sign in. Check your email and password."
+    );
+  } finally {
+    button.disabled=false;
+  }
+});
+
+// LOGOUT
+
+el("sign-out-btn").onclick=async()=>{
+  const button=el("sign-out-btn");
+  button.disabled=true;
+  setAuthMessage("Signing out...");
+  try {
+    await signOut(auth);
+    setAuthMessage("");
+  } catch(error) {
+    setAuthMessage("Unable to sign out: "+error.message);
+  } finally {
+    button.disabled=false;
+  }
+};
+
+// AUTH STATE
+
+onAuthStateChanged(auth,async user=>{
+  const version=++authVersion;
+  isAdmin=false;
+  closeEvent();
+
+  el("event-admin").hidden=true;
+  el("event-drafts").hidden=true;
+  el("event-management-controls").hidden=true;
+  el("publishing-controls").hidden=true;
+  el("match-booking-section").hidden=true;
+  el("signed-out-panel").hidden=true;
+  el("signed-in-panel").hidden=true;
+  el("account-status").textContent="Checking account...";
+
+  if(user) {
+    try {
+      const profile=await getDoc(doc(db,"users",user.uid));
+      if(version!==authVersion)return;
+      isAdmin=profile.exists()&&
+        profile.data().active===true&&
+        profile.data().role==="admin";
+    } catch(error) {
+      if(version!==authVersion)return;
+      console.error(error);
+    }
+  }
+  if(version!==authVersion)return;
+
+  if(user) {
+    el("signed-in-panel").hidden=false;
+    el("account-email").textContent=
+      user.email||"Signed-in account";
+    el("account-status").textContent=
+      isAdmin?"ADMINISTRATOR":"SIGNED IN";
+  } else {
+    el("signed-out-panel").hidden=false;
+    el("account-status").textContent="PUBLIC VISITOR";
+  }
+
+  el("event-admin").hidden=!isAdmin;
+  el("event-drafts").hidden=!isAdmin;
+  await loadEvents();
+  if(version!==authVersion)return;
+  if(isAdmin)await loadDrafts();
+});
+</script>
 </body>
 </html>

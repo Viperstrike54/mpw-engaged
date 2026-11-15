@@ -1,0 +1,225 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userProfile() {
+      return get(
+        /databases/$(database)/documents/users/$(request.auth.uid)
+      ).data;
+    }
+
+    function activeUser() {
+      return signedIn()
+        && exists(
+          /databases/$(database)/documents/users/$(request.auth.uid)
+        )
+        && userProfile().active == true;
+    }
+
+    function isAdmin() {
+      return activeUser()
+        && userProfile().role == "admin";
+    }
+
+    function isContributor() {
+      return activeUser()
+        && userProfile().role == "contributor";
+    }
+
+    // USERS
+
+    match /users/{userId} {
+      allow read: if isAdmin()
+        || (signedIn() && request.auth.uid == userId);
+
+      allow create, update, delete: if isAdmin();
+    }
+
+    // NEWS AND PROMOS
+
+    match /content/{contentId} {
+      allow read: if resource.data.status == "published"
+        || isAdmin()
+        || (activeUser()
+          && resource.data.authorUid == request.auth.uid);
+
+      allow create: if isAdmin()
+        || (
+          isContributor()
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.status == "draft"
+        );
+
+      allow update: if isAdmin()
+        || (
+          isContributor()
+          && resource.data.authorUid == request.auth.uid
+          && resource.data.status == "draft"
+          && request.resource.data.authorUid == resource.data.authorUid
+          && request.resource.data.status == "draft"
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    // ROSTER
+
+    match /wrestlers/{wrestlerId} {
+      allow read: if isAdmin()
+        || (
+          resource.data.published == true
+          && resource.data.visibility == "public"
+        );
+
+      allow create, update, delete: if isAdmin();
+    }
+
+    // EVENT HELPERS
+
+    function validPublicationStatus(data) {
+      return data.keys().hasAll(["publicationStatus"])
+        && data.publicationStatus in ["draft", "published"];
+    }
+
+    function eventPublished(eventId) {
+      return exists(
+        /databases/$(database)/documents/events/$(eventId)
+      )
+      && get(
+        /databases/$(database)/documents/events/$(eventId)
+      ).data.publicationStatus == "published";
+    }
+
+    function ownsEvent(eventId) {
+      return activeUser()
+        && exists(
+          /databases/$(database)/documents/events/$(eventId)
+        )
+        && get(
+          /databases/$(database)/documents/events/$(eventId)
+        ).data.authorUid == request.auth.uid;
+    }
+
+    function canEditEventDraft(eventId) {
+      return isContributor()
+        && ownsEvent(eventId)
+        && get(
+          /databases/$(database)/documents/events/$(eventId)
+        ).data.publicationStatus == "draft";
+    }
+
+    // MPW EVENT HUB
+
+    match /events/{eventId} {
+
+      allow read: if isAdmin()
+        || resource.data.publicationStatus == "published"
+        || (
+          isContributor()
+          && resource.data.authorUid == request.auth.uid
+        );
+
+      allow create: if isAdmin()
+        || (
+          isContributor()
+          && validPublicationStatus(request.resource.data)
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.publicationStatus == "draft"
+        );
+
+      allow update: if isAdmin()
+        || (
+          isContributor()
+          && resource.data.authorUid == request.auth.uid
+          && resource.data.publicationStatus == "draft"
+          && request.resource.data.authorUid == resource.data.authorUid
+          && request.resource.data.publicationStatus == "draft"
+        );
+
+      allow delete: if isAdmin();
+
+      // PRIVATE BOOKING DETAILS
+
+      match /private/{docId} {
+        allow read: if isAdmin()
+          || canEditEventDraft(eventId);
+
+        allow create, update: if isAdmin()
+          || canEditEventDraft(eventId);
+
+        allow delete: if isAdmin();
+      }
+
+      // MATCH CARDS AND RESULTS
+
+      match /matches/{matchId} {
+
+        // Published event = publicly visible match card.
+        // Draft event = private match card.
+
+        allow read: if isAdmin()
+          || canEditEventDraft(eventId)
+          || eventPublished(eventId);
+
+        // Admins can book and edit matches at any time.
+        // Contributors remain restricted to drafts.
+
+        allow create: if isAdmin()
+          || (
+            canEditEventDraft(eventId)
+            && validPublicationStatus(request.resource.data)
+            && request.resource.data.publicationStatus == "draft"
+          );
+
+        allow update: if isAdmin()
+          || (
+            canEditEventDraft(eventId)
+            && resource.data.publicationStatus == "draft"
+            && request.resource.data.publicationStatus == "draft"
+          );
+
+        allow delete: if isAdmin();
+      }
+
+      // PROMOS AND SHOW SEGMENTS
+
+      match /segments/{segmentId} {
+
+        allow read: if isAdmin()
+          || canEditEventDraft(eventId)
+          || (
+            eventPublished(eventId)
+            && resource.data.publicationStatus == "published"
+          );
+
+        allow create: if isAdmin()
+          || (
+            canEditEventDraft(eventId)
+            && validPublicationStatus(request.resource.data)
+            && request.resource.data.publicationStatus == "draft"
+          );
+
+        allow update: if isAdmin()
+          || (
+            canEditEventDraft(eventId)
+            && resource.data.publicationStatus == "draft"
+            && request.resource.data.publicationStatus == "draft"
+          );
+
+        allow delete: if isAdmin();
+      }
+    }
+
+    // DENY ALL OTHER ACCESS
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

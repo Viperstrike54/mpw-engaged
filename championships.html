@@ -6,263 +6,943 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MPW ENGAGED | Championships</title>
 <style>
-:root{--bg:#100b19;--panel:#1e162c;--panel2:#291e3a;--gold:#dfbb69;--text:#f5f0fa;--muted:#aaa0b8;--line:#463754}
+:root{
+ --bg:#100b19;--panel:#1e162c;--panel2:#291e3a;
+ --gold:#dfbb69;--text:#f5f0fa;--muted:#aaa0b8;
+ --line:#463754
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,-apple-system,sans-serif}
-header{background:#170f23;border-bottom:1px solid var(--line);padding:17px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{font-weight:900;letter-spacing:1px;color:var(--gold);font-size:19px}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font:15px system-ui,-apple-system,sans-serif
+}
+header{
+ background:#170f23;border-bottom:1px solid var(--line);
+ padding:16px;display:flex;align-items:center;
+ justify-content:space-between;gap:12px;flex-wrap:wrap
+}
+.brand{font-weight:900;color:var(--gold);font-size:19px}
 a{color:var(--gold);text-decoration:none}
 main{max-width:1050px;margin:auto;padding:18px 13px 60px}
-h1{font-size:25px;margin:8px 0 5px}
-h2{font-size:19px;margin:0 0 14px}
+h1{font-size:25px;margin:8px 0}
+h2{font-size:19px;margin:0 0 12px}
 p{color:var(--muted);line-height:1.5}
 button,input,select,textarea{font:inherit}
-button{background:#342442;border:1px solid #655076;color:white;padding:10px 13px;border-radius:10px;cursor:pointer}
-button.primary{background:var(--gold);color:#211524;border-color:var(--gold);font-weight:800}
-button.danger{border-color:#9a525e;color:#ffb4bd}
+button{
+ background:#342442;border:1px solid #655076;
+ color:white;padding:10px 13px;border-radius:10px;
+ cursor:pointer
+}
+button.primary{
+ background:var(--gold);color:#211524;
+ border-color:var(--gold);font-weight:800
+}
 button:disabled{opacity:.5}
-input,select,textarea{width:100%;background:#130e1d;border:1px solid #675578;color:white;padding:11px;border-radius:9px}
-textarea{min-height:90px}
-label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:16px;margin:14px 0}
-.flex{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+input,select,textarea{
+ width:100%;background:#130e1d;border:1px solid #675578;
+ color:white;padding:11px;border-radius:9px
+}
+textarea{min-height:100px}
+label{
+ display:block;font-size:13px;color:var(--muted);
+ margin:12px 0 5px
+}
+.card{
+ background:var(--panel);border:1px solid var(--line);
+ border-radius:15px;padding:16px;margin:14px 0
+}
+.flex{
+ display:flex;align-items:center;
+ justify-content:space-between;gap:10px;flex-wrap:wrap
+}
 .small{font-size:12px;color:var(--muted)}
 .gold{color:var(--gold)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+.grid{
+ display:grid;grid-template-columns:
+ repeat(auto-fit,minmax(145px,1fr));gap:10px
+}
 .stat{background:var(--panel2);padding:13px;border-radius:11px}
-.stat b{display:block;font-size:20px;margin-top:7px}
+.stat b{display:block;font-size:19px;margin-top:7px}
 .tabs{display:flex;gap:7px;overflow:auto;padding:12px 0}
 .tabs button{white-space:nowrap}
 .tabs button.active{background:var(--gold);color:#241528}
-.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:30px;padding:6px 10px;font-size:12px}
+.pill{
+ display:inline-flex;align-items:center;gap:6px;
+ border:1px solid var(--line);border-radius:30px;
+ padding:6px 10px;font-size:12px
+}
 .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
-.Active{background:#4bd88b}.Vacant{background:#f5c64d}.Inactive{background:#f0717e}
+.Active{background:#4bd88b}
+.Vacant{background:#f5c64d}
+.Inactive{background:#f0717e}
 .stars{font-size:24px;color:var(--gold);letter-spacing:2px}
-.hero{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center}
-.belt{width:100%;height:130px;object-fit:contain;background:#130e1d;border-radius:12px}
-.placeholder{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--gold);font-weight:800;padding:12px}
+.hero{
+ display:grid;grid-template-columns:150px 1fr;
+ gap:18px;align-items:center
+}
+.belt{
+ width:100%;height:140px;object-fit:contain;
+ background:#130e1d;border-radius:12px
+}
+.placeholder{
+ display:flex;align-items:center;justify-content:center;
+ text-align:center;color:var(--gold);font-weight:800
+}
 .record{padding:13px 0;border-bottom:1px solid var(--line)}
 .record:last-child{border-bottom:0}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:11px 9px;text-align:left;border-bottom:1px solid var(--line)}
+th,td{
+ padding:11px 9px;text-align:left;
+ border-bottom:1px solid var(--line)
+}
 th{color:var(--gold)}
 .scroll{overflow-x:auto}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-dialog{background:#1e162c;color:white;border:1px solid #725987;border-radius:16px;width:min(95vw,570px);max-height:88vh;overflow:auto;padding:20px}
+dialog{
+ background:#1e162c;color:white;border:1px solid #725987;
+ border-radius:16px;width:min(95vw,570px);
+ max-height:88vh;overflow:auto;padding:20px
+}
 dialog::backdrop{background:#000b}
 dialog h2{color:var(--gold)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.notice{padding:11px;background:#32263e;border-radius:10px;font-size:13px;color:#ddd1e8}
-@media(max-width:500px){.hero{grid-template-columns:1fr}.belt{height:160px}.two{grid-template-columns:1fr}h1{font-size:22px}}
+.notice{
+ padding:12px;background:#32263e;border-radius:10px;
+ font-size:13px;color:#ddd1e8;margin:12px 0
+}
+.auth{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.auth input{width:155px}
+[hidden]{display:none!important}
+@media(max-width:500px){
+ .hero{grid-template-columns:1fr}
+ .belt{height:160px}
+ h1{font-size:22px}
+ .auth input{width:130px}
+}
 </style>
 </head>
 <body>
+
 <header>
-<div class="brand">🔮 MPW ENGAGED</div>
-<a href="index.html">← Main Website</a>
+ <div class="brand">🔮 MPW ENGAGED</div>
+ <a href="index.html">← Main Website</a>
 </header>
+
 <main>
-<div class="flex">
-<div><h1>🏆 Championships</h1><p>Lineage • Prestige • History • Records</p></div>
-<button class="primary" onclick="editTitle()">+ Championship</button>
-</div>
-<div id="ranking"></div>
-<div id="selector" class="tabs"></div>
-<div id="content"></div>
+ <div class="card">
+  <div class="flex">
+   <div>
+    <b>Championship Database</b>
+    <div id="authStatus" class="small">Checking login...</div>
+   </div>
+   <div class="auth" id="loginArea" hidden>
+    <input id="email" type="email" placeholder="Admin email">
+    <input id="password" type="password" placeholder="Password">
+    <button id="loginBtn">Sign In</button>
+   </div>
+   <button id="logoutBtn" hidden>Sign Out</button>
+  </div>
+  <div id="systemStatus" class="notice">
+   Connecting to Firebase...
+  </div>
+ </div>
+
+ <div class="flex">
+  <div>
+   <h1>🏆 Championships</h1>
+   <p>Prestige • Lineage • Records • History</p>
+  </div>
+  <button id="addTitle" class="primary admin" hidden>
+   + Championship
+  </button>
+ </div>
+
+ <div id="ranking"></div>
+ <div id="selector" class="tabs"></div>
+ <div id="content"></div>
 </main>
+
 <dialog id="modal">
-<h2 id="modalTitle"></h2>
-<div id="modalBody"></div>
-<div class="actions">
-<button class="primary" id="saveBtn">Save</button>
-<button onclick="closeModal()">Cancel</button>
-</div>
+ <h2 id="modalTitle"></h2>
+ <div id="modalBody"></div>
+ <div class="actions">
+  <button class="primary" id="saveBtn">Save to Firebase</button>
+  <button id="cancelBtn">Cancel</button>
+ </div>
 </dialog>
-<script>
-const KEY="mpw_championships_phase003";
-const starter=[
-{
-id:"mpw",name:"MPW Championship",status:"Active",prestige:5,
-champion:"Alexander Miles",image:"",notes:"",
-reigns:[
-["Daryl Draven",0,"Ultra-Showdown V",1,"1v1"],
-["Aiden Miles",2,"Revenge",3,"1v1"],
-["Alex Reynolds",1,"The Jungle",2,"Triple Threat"],
-["Alexander Saint",1,"Sands of Time",6,"1v1"],
-["Nemith Rivera",0,"Ultra-Showdown VI",1,"1v1"],
-["Zach Moore",0,"Revenge",2,"1v1"],
-["Daryl Draven",1,"No Holds Barred",3,"1v1 Falls Count Anywhere"],
-["Alex Reynolds",1,"Sands of Time",3,"Triple Threat"],
-["Aiden Miles",0,"Stairway to Heaven",3,"1v1"],
-["Israel Keyes",0,"Ultra Showdown VII",1,"Triple Threat"],
-["Alexander Miles",0,"Revenge",1,"1v1"]
-].map((r,i)=>({id:"r"+i,name:r[0],members:"",defenses:r[1],event:r[2],months:r[3],type:r[4],notes:""})),
-matches:[],log:[]
-},
-...["Heavyweight Championship","United States Championship","Intercontinental Championship","Light Heavyweight Championship","Television Championship","North American Championship","Hardcore Championship","Tag Team Championship","Trios Championships","Women's Championship"].map((name,i)=>({
-id:"title"+i,name,status:"Active",prestige:0,champion:"",
-image:"",notes:"",reigns:[],matches:[],log:[]
-}))
-];
-let titles;
-try{titles=JSON.parse(localStorage.getItem(KEY))||structuredClone(starter)}
-catch(e){titles=structuredClone(starter)}
-let selected=titles[0]?.id||"mpw",tab="lineage";
+
+<script type="module">
+import {initializeApp} from
+ "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+import {
+ getFirestore,collection,doc,getDoc,getDocs,
+ setDoc,updateDoc
+} from
+ "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+import {
+ getAuth,onAuthStateChanged,
+ signInWithEmailAndPassword,signOut
+} from
+ "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA",
+ authDomain:"mpw-engaged.firebaseapp.com",
+ projectId:"mpw-engaged",
+ storageBucket:"mpw-engaged.firebasestorage.app",
+ messagingSenderId:"133272625859",
+ appId:"1:133272625859:web:d1e09eaf1b4613172a7876"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
+
 const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const current=()=>titles.find(t=>t.id===selected);
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(titles))}catch(e){alert("Browser storage is full. Export your data.")}render()};
-const stars=n=>{let out="";for(let i=1;i<=5;i++)out+=n>=i?"★":n>=i-.5?"⯪":"☆";return out};
-const btn=(label,fn,cls="")=>`<button class="${cls}" onclick="${fn}">${label}</button>`;
-function render(){
-$("ranking").innerHTML=`<div class="card"><div class="flex"><h2>⭐ Championship Prestige Rankings</h2><span class="small">Current ratings</span></div>
-${[...titles].sort((a,b)=>b.prestige-a.prestige||a.name.localeCompare(b.name)).map((t,i)=>`<div class="record flex"><span>${i+1}. ${esc(t.name)}</span><span class="gold">${stars(t.prestige)} ${Number(t.prestige).toFixed(1)}</span></div>`).join("")}</div>`;
-$("selector").innerHTML=titles.map(t=>`<button class="${t.id===selected?"active":""}" onclick="choose('${t.id}')">${esc(t.name)}</button>`).join("");
-let t=current();if(!t){$("content").innerHTML="";return}
-const status=t.status||"Active";
-let hero=`<div class="card">
-<div class="flex"><h2>${esc(t.name)}</h2><span class="pill"><span class="dot ${esc(status)}"></span>${esc(status)}</span></div>
-<div class="hero"><div>${t.image?`<img class="belt" src="${esc(t.image)}" alt="Championship belt" onerror="this.style.display='none'">`:`<div class="belt placeholder">🏆<br>MPW<br>CHAMPIONSHIP</div>`}</div>
-<div><div class="small">CURRENT CHAMPION</div><h2>${esc(status==="Vacant"?"VACANT":t.champion||"Not entered")}</h2>
-<div class="stars">${stars(t.prestige)}</div><div class="small">Prestige: ${Number(t.prestige).toFixed(1)} / 5</div>
-<div class="actions">${btn("Edit Championship","editTitle()")}${btn("Adjust Prestige","editPrestige()")}${btn("Add Reign","editReign()")}</div></div></div></div>`;
-let tabs=[["lineage","Title Lineage"],["matches","Title Match History"],["records","Records"],["log","Event Log"],["notes","Notes"]];
-let nav=`<div class="tabs">${tabs.map(x=>`<button class="${tab===x[0]?"active":""}" onclick="setTab('${x[0]}')">${x[1]}</button>`).join("")}</div>`;
-$("content").innerHTML=hero+nav+section(t);
-}
-function choose(id){selected=id;tab="lineage";render()}
-function setTab(x){tab=x;render()}
-function section(t){
-if(tab==="lineage"){
-return `<div class="card"><div class="flex"><h2>Championship Lineage</h2>${btn("+ Add Reign","editReign()","primary")}</div>
-${!t.reigns.length?`<p>No reigns entered yet.</p>`:`<div class="scroll"><table><thead><tr><th>#</th><th>Champion / Team</th><th>Defenses</th><th>Event Won</th><th>Months</th><th>Match Type</th><th></th></tr></thead><tbody>
-${[...t.reigns].reverse().map((r,i)=>`<tr><td>${t.reigns.length-i}</td><td><b>${esc(r.name)}</b>${r.members?`<div class="small">${esc(r.members)}</div>`:""}</td><td>${r.defenses}</td><td>${esc(r.event)}</td><td>${r.months}</td><td>${esc(r.type)}</td><td>${btn("Edit",`editReign('${r.id}')`)}</td></tr>`).join("")}</tbody></table></div>`}</div>`;
-}
-if(tab==="records"){
-const r=t.reigns,counts={},months={},defs={};
-r.forEach(x=>{counts[x.name]=(counts[x.name]||0)+1;months[x.name]=(months[x.name]||0)+Number(x.months||0);defs[x.name]=(defs[x.name]||0)+Number(x.defenses||0)});
-const leaders=(obj)=>{let m=Math.max(0,...Object.values(obj));return m?Object.keys(obj).filter(k=>obj[k]===m).join(", ")+" — "+m:"Not available"};
-const longest=r.length?[...r].sort((a,b)=>b.months-a.months)[0]:null;
-const shortest=r.length?[...r].sort((a,b)=>a.months-b.months)[0]:null;
-const mostDef=r.length?[...r].sort((a,b)=>b.defenses-a.defenses)[0]:null;
-const cards=[
-["Recorded Reigns",r.length],["Recorded Title Matches",t.matches.length],
-["First Champion",r[0]?.name||"Unknown"],["Most Reigns",leaders(counts)],
-["Longest Single Reign",longest?longest.name+" — "+longest.months+" months":"Unknown"],
-["Shortest Reign",shortest?shortest.name+" — "+shortest.months+" months":"Unknown"],
-["Most Combined Months",leaders(months)],
-["Most Career Defenses",leaders(defs)],
-["Most Defenses in One Reign",mostDef?mostDef.name+" — "+mostDef.defenses:"Unknown"],
-["Current Prestige",t.prestige+"/5"],
-["Highest Recorded Prestige",Math.max(t.prestige,...t.log.filter(x=>x.rating!==null&&x.rating!==undefined).map(x=>Number(x.rating)))+"/5"]
+const esc=s=>String(s??"").replace(
+ /[&<>"']/g,
+ c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])
+);
+const uid=()=>crypto.randomUUID();
+const num=v=>Number(v)||0;
+
+let titles=[];
+let selected="mpw";
+let tab="lineage";
+let admin=false;
+let loading=true;
+
+const knownNames=[
+ ["mpw","MPW Championship"],
+ ["heavyweight","Heavyweight Championship"],
+ ["united-states","United States Championship"],
+ ["intercontinental","Intercontinental Championship"],
+ ["light-heavyweight","Light Heavyweight Championship"],
+ ["television","Television Championship"],
+ ["north-american","North American Championship"],
+ ["hardcore","Hardcore Championship"],
+ ["tag-team","Tag Team Championship"],
+ ["trios","Trios Championships"],
+ ["womens","Women's Championship"]
 ];
-return `<div class="card"><h2>Championship Records</h2><div class="grid">${cards.map(c=>`<div class="stat"><div class="small">${esc(c[0])}</div><b>${esc(c[1])}</b></div>`).join("")}</div><p class="small">Records are calculated from entered data. Missing historical matches are not counted as zero.</p></div>`;
+
+function emptyTitle(id,name){
+ return {
+  id,name,status:"Active",prestige:0,
+  champion:"",members:"",image:"",notes:"",
+  reigns:[],matches:[],log:[],prestigeHistory:[]
+ };
 }
-if(tab==="matches"){
-return `<div class="card"><div class="flex"><h2>Title Match History</h2>${btn("+ Title Match","editMatch()","primary")}</div>
-${!t.matches.length?"<p>No title matches recorded yet. Historical opponents can be added whenever you know them.</p>":t.matches.map(m=>`<div class="record"><b>${esc(m.event||"Event unknown")}</b><div>${esc(m.participants)}</div><div class="small">Champion entering: ${esc(m.entering)} | ${esc(m.type)}</div><div class="gold">Winner: ${esc(m.winner)} • ${esc(m.outcome)}</div>${m.notes?`<p>${esc(m.notes)}</p>`:""}${btn("Edit",`editMatch('${m.id}')`)}</div>`).join("")}</div>`;
+
+function normalize(id,data){
+ return {
+  ...emptyTitle(id,data.name||id),
+  ...data,id,
+  reigns:Array.isArray(data.reigns)?data.reigns:[],
+  matches:Array.isArray(data.matches)?data.matches:[],
+  log:Array.isArray(data.log)?data.log:[],
+  prestigeHistory:Array.isArray(data.prestigeHistory)
+   ?data.prestigeHistory:[]
+ };
 }
-if(tab==="log"){
-return `<div class="card"><div class="flex"><h2>Championship Event Log</h2>${btn("+ Log Entry","editLog()","primary")}</div>
-${!t.log.length?"<p>No events logged yet. Track promos, confrontations, defenses, title changes, vacancies, and prestige shifts here.</p>":t.log.map(e=>`<div class="record"><div class="flex"><b>${esc(e.event||"Event not specified")}</b><span class="pill">${esc(e.type)}</span></div><p>${esc(e.description)}</p><div class="small">${esc(e.people||"")}${e.rating!==null&&e.rating!==undefined?" • Prestige: "+e.rating+"/5":""}</div>${btn("Edit",`editLog('${e.id}')`)}</div>`).join("")}</div>`;
+
+function current(){
+ return titles.find(t=>t.id===selected);
 }
-return `<div class="card"><h2>Championship Notes</h2><p style="white-space:pre-wrap">${esc(t.notes||"No notes yet.")}</p>${btn("Edit Notes","editNotes()")}</div>`;
+
+function message(s){
+ $("systemStatus").textContent=s;
 }
-function openModal(title,body,onSave){
-$("modalTitle").textContent=title;$("modalBody").innerHTML=body;
-$("saveBtn").onclick=onSave;$("modal").showModal();
+
+function stars(n){
+ let s="";
+ for(let i=1;i<=5;i++){
+  s+=n>=i?"★":n>=i-.5?"⯪":"☆";
+ }
+ return s;
 }
-function closeModal(){$("modal").close()}
+
+function button(label,fn){
+ return `<button class="admin" data-action="${fn}">${label}</button>`;
+}
+
+async function load(){
+ loading=true;
+ message("Loading championships from Firebase...");
+ try{
+  const snapshot=await getDocs(collection(db,"championships"));
+  const found=snapshot.docs.map(d=>normalize(d.id,d.data()));
+  const ids=new Set(found.map(x=>x.id));
+
+  // Missing titles are displayed as unsaved placeholders.
+  // They are not written to Firebase automatically.
+  titles=[
+   ...found,
+   ...knownNames.filter(x=>!ids.has(x[0]))
+    .map(x=>emptyTitle(x[0],x[1]))
+  ];
+
+  if(!titles.some(x=>x.id===selected)){
+   selected=titles[0]?.id||"mpw";
+  }
+
+  message("Connected to Firebase. Championship records loaded.");
+ }catch(e){
+  console.error(e);
+  message("Firebase loading failed: "+e.message);
+  titles=[];
+ }
+ loading=false;
+ render();
+}
+
+async function saveTitle(t){
+ if(!admin){
+  alert("Only active MPW admins can edit championships.");
+  return false;
+ }
+ try{
+  message("Saving to Firebase...");
+  const ref=doc(db,"championships",t.id);
+  const existing=await getDoc(ref);
+
+  const payload={...t};
+  delete payload.id;
+
+  if(existing.exists()){
+   await updateDoc(ref,payload);
+  }else{
+   await setDoc(ref,payload);
+  }
+
+  message("Saved successfully to Firebase.");
+  await load();
+  return true;
+ }catch(e){
+  console.error(e);
+  message("Save failed: "+e.message);
+  alert("Firebase save failed: "+e.message);
+  return false;
+ }
+}
+
+function rank(){
+ return [...titles].sort(
+  (a,b)=>num(b.prestige)-num(a.prestige)
+   ||a.name.localeCompare(b.name)
+ );
+}
+
+function render(){
+ $("addTitle").hidden=!admin;
+
+ $("ranking").innerHTML=`
+ <div class="card">
+  <div class="flex">
+   <h2>⭐ Championship Prestige Rankings</h2>
+   <span class="small">Current ratings</span>
+  </div>
+  ${rank().map((t,i)=>`
+   <div class="record flex">
+    <span>${i+1}. ${esc(t.name)}</span>
+    <span class="gold">
+     ${stars(num(t.prestige))}
+     ${num(t.prestige).toFixed(1)}
+    </span>
+   </div>
+  `).join("")}
+ </div>`;
+
+ $("selector").innerHTML=titles.map(t=>`
+  <button class="${t.id===selected?"active":""}"
+   data-select="${esc(t.id)}">${esc(t.name)}</button>
+ `).join("");
+
+ const t=current();
+ if(!t){
+  $("content").innerHTML="<p>No championship data available.</p>";
+  return;
+ }
+
+ const status=["Active","Vacant","Inactive"].includes(t.status)
+  ?t.status:"Active";
+
+ const adminActions=admin?`
+  <div class="actions">
+   ${button("Edit Championship","title")}
+   ${button("Adjust Prestige","prestige")}
+   ${button("Add Reign","reign")}
+  </div>`:"";
+
+ const image=t.image
+  ?`<img class="belt" src="${esc(t.image)}" alt="Championship belt">`
+  :`<div class="belt placeholder">🏆 ${esc(t.name)}</div>`;
+
+ const hero=`
+ <div class="card">
+  <div class="flex">
+   <h2>${esc(t.name)}</h2>
+   <span class="pill">
+    <span class="dot ${status}"></span>${status}
+   </span>
+  </div>
+  <div class="hero">
+   <div>${image}</div>
+   <div>
+    <div class="small">CURRENT CHAMPION</div>
+    <h2>${esc(status==="Vacant"?"VACANT":
+     t.champion||"Not entered")}</h2>
+    ${t.members?`<p>${esc(t.members)}</p>`:""}
+    <div class="stars">${stars(num(t.prestige))}</div>
+    <div class="small">
+     Championship Prestige: ${num(t.prestige).toFixed(1)}/5
+    </div>
+    ${adminActions}
+   </div>
+  </div>
+ </div>`;
+
+ const tabs=[
+  ["lineage","Title Lineage"],
+  ["matches","Title Match History"],
+  ["records","Records"],
+  ["log","Event Log"],
+  ["notes","Notes"]
+ ];
+
+ $("content").innerHTML=hero+`
+ <div class="tabs">
+ ${tabs.map(x=>`
+  <button class="${tab===x[0]?"active":""}"
+   data-tab="${x[0]}">${x[1]}</button>
+ `).join("")}
+ </div>`+section(t);
+
+ document.querySelectorAll(".admin").forEach(x=>{
+  x.hidden=!admin;
+ });
+}
+
+function section(t){
+ if(tab==="lineage"){
+  return `<div class="card">
+   <div class="flex">
+    <h2>Championship Lineage</h2>
+    ${admin?button("+ Add Reign","reign"):""}
+   </div>
+   ${!t.reigns.length
+    ?`<p>No historical reigns entered yet.</p>`
+    :`<div class="scroll"><table>
+      <thead><tr>
+       <th>#</th><th>Champion / Team</th>
+       <th>Defenses</th><th>Event Won</th>
+       <th>Months</th><th>Match Type</th>
+       ${admin?"<th>Edit</th>":""}
+      </tr></thead>
+      <tbody>
+      ${[...t.reigns].reverse().map((r,i)=>`
+       <tr>
+        <td>${t.reigns.length-i}</td>
+        <td><b>${esc(r.name)}</b>
+         <div class="small">${esc(r.members||"")}</div>
+        </td>
+        <td>${esc(r.defenses)}</td>
+        <td>${esc(r.event)}</td>
+        <td>${esc(r.months)}</td>
+        <td>${esc(r.type)}</td>
+        ${admin?`<td><button data-edit-reign="${esc(r.id)}">
+         Edit</button></td>`:""}
+       </tr>
+      `).join("")}
+      </tbody></table></div>`}
+  </div>`;
+ }
+
+ if(tab==="records"){
+  const r=t.reigns;
+  const counts={},months={},defs={};
+
+  for(const x of r){
+   counts[x.name]=(counts[x.name]||0)+1;
+   months[x.name]=(months[x.name]||0)+num(x.months);
+   defs[x.name]=(defs[x.name]||0)+num(x.defenses);
+  }
+
+  function leaders(obj){
+   const max=Math.max(0,...Object.values(obj));
+   return max?Object.keys(obj).filter(
+    k=>obj[k]===max
+   ).join(", ")+" — "+max:"Not available";
+  }
+
+  const longest=[...r].sort(
+   (a,b)=>num(b.months)-num(a.months)
+  )[0];
+
+  const shortest=[...r].sort(
+   (a,b)=>num(a.months)-num(b.months)
+  )[0];
+
+  const mostDef=[...r].sort(
+   (a,b)=>num(b.defenses)-num(a.defenses)
+  )[0];
+
+  const ratings=[
+   num(t.prestige),
+   ...t.prestigeHistory.map(x=>num(x.rating))
+  ];
+
+  const cards=[
+   ["Recorded Reigns",r.length],
+   ["Recorded Title Matches",t.matches.length],
+   ["First Champion",r[0]?.name||"Unknown"],
+   ["Most Reigns",leaders(counts)],
+   ["Longest Reign",longest?
+    longest.name+" — "+longest.months+" months":"Unknown"],
+   ["Shortest Reign",shortest?
+    shortest.name+" — "+shortest.months+" months":"Unknown"],
+   ["Combined Months Leader",leaders(months)],
+   ["Career Defenses Leader",leaders(defs)],
+   ["Most Defenses in One Reign",mostDef?
+    mostDef.name+" — "+mostDef.defenses:"Unknown"],
+   ["Current Prestige",num(t.prestige).toFixed(1)+"/5"],
+   ["Highest Recorded Prestige",
+    Math.max(...ratings).toFixed(1)+"/5"]
+  ];
+
+  return `<div class="card">
+   <h2>Championship Records</h2>
+   <div class="grid">
+    ${cards.map(c=>`<div class="stat">
+     <div class="small">${esc(c[0])}</div>
+     <b>${esc(c[1])}</b>
+    </div>`).join("")}
+   </div>
+   <p class="small">
+    Calculated from recorded history only.
+    Missing historical matches are not assumed to be losses.
+   </p>
+  </div>`;
+ }
+
+ if(tab==="matches"){
+  return `<div class="card">
+   <div class="flex">
+    <h2>Title Match History</h2>
+    ${admin?button("+ Title Match","match"):""}
+   </div>
+   ${!t.matches.length
+    ?"<p>No title matches recorded yet.</p>"
+    :t.matches.map(m=>`
+     <div class="record">
+      <b>${esc(m.event||"Unknown Event")}</b>
+      <div>${esc(m.participants)}</div>
+      <div class="small">
+       Champion entering: ${esc(m.entering)}
+       • ${esc(m.type)}
+      </div>
+      <div class="gold">
+       Winner: ${esc(m.winner)} • ${esc(m.outcome)}
+      </div>
+      <p>${esc(m.notes)}</p>
+      ${admin?`<button data-edit-match="${esc(m.id)}">
+       Edit</button>`:""}
+     </div>
+    `).join("")}
+  </div>`;
+ }
+
+ if(tab==="log"){
+  return `<div class="card">
+   <div class="flex">
+    <h2>Championship Event Log</h2>
+    ${admin?button("+ Log Entry","log"):""}
+   </div>
+   ${!t.log.length
+    ?"<p>No championship events logged yet.</p>"
+    :t.log.map(e=>`
+     <div class="record">
+      <div class="flex">
+       <b>${esc(e.event||"Event not specified")}</b>
+       <span class="pill">${esc(e.type)}</span>
+      </div>
+      <p>${esc(e.description)}</p>
+      <div class="small">${esc(e.people)}</div>
+      ${admin?`<button data-edit-log="${esc(e.id)}">
+       Edit</button>`:""}
+     </div>
+    `).join("")}
+  </div>`;
+ }
+
+ return `<div class="card">
+  <h2>Championship Notes</h2>
+  <p style="white-space:pre-wrap">
+   ${esc(t.notes||"No notes yet.")}
+  </p>
+  ${admin?button("Edit Notes","notes"):""}
+ </div>`;
+}
+
 function field(label,id,value="",type="text"){
-return `<label for="${id}">${label}</label><input id="${id}" type="${type}" value="${esc(value)}">`;
+ return `<label for="${id}">${label}</label>
+ <input id="${id}" type="${type}" value="${esc(value)}">`;
 }
+
 function choice(label,id,options,value){
-return `<label for="${id}">${label}</label><select id="${id}">${options.map(o=>`<option ${o===value?"selected":""}>${esc(o)}</option>`).join("")}</select>`;
+ return `<label for="${id}">${label}</label>
+ <select id="${id}">
+ ${options.map(o=>`<option value="${esc(o)}"
+ ${o===value?"selected":""}>${esc(o)}</option>`).join("")}
+ </select>`;
 }
-function val(id){return $(id).value.trim()}
-function editTitle(){
-let t=current(),adding=!t;
-openModal(adding?"Add Championship":"Edit Championship",
-field("Championship Name","fName",t?.name)+
-field("Belt Image URL","fImage",t?.image)+
-field("Current Champion / Team","fChampion",t?.champion)+
-choice("Status","fStatus",["Active","Vacant","Inactive"],t?.status||"Active")+
-`<p class="small">Add title reigns separately to preserve full lineage.</p>`,
-()=>{
-let name=val("fName");if(!name)return alert("Enter a championship name.");
-if(adding){t={id:uid(),name,image:"",champion:"",status:"Active",prestige:0,notes:"",reigns:[],matches:[],log:[]};titles.push(t);selected=t.id}
-t.name=name;t.image=val("fImage");t.champion=val("fChampion");t.status=val("fStatus");
-closeModal();save();
-});
+
+function val(id){
+ return $(id).value.trim();
 }
+
+function openModal(title,body,onSave){
+ if(!admin)return;
+ $("modalTitle").textContent=title;
+ $("modalBody").innerHTML=body;
+ $("saveBtn").onclick=async()=>{
+  $("saveBtn").disabled=true;
+  try{await onSave()}
+  finally{$("saveBtn").disabled=false}
+ };
+ $("modal").showModal();
+}
+
+function closeModal(){
+ $("modal").close();
+}
+
+function copyCurrent(){
+ return structuredClone(current());
+}
+
+function editTitle(adding=false){
+ const t=adding
+  ?emptyTitle(uid(),"")
+  :copyCurrent();
+
+ openModal(
+  adding?"Add Championship":"Edit Championship",
+  field("Championship Name","fName",t.name)+
+  field("Belt Image URL","fImage",t.image)+
+  field("Current Champion / Team","fChampion",t.champion)+
+  field("Team Members","fMembers",t.members)+
+  choice("Status","fStatus",
+   ["Active","Vacant","Inactive"],t.status),
+  async()=>{
+   if(!val("fName")){
+    alert("Enter a championship name.");return;
+   }
+
+   t.name=val("fName");
+   t.image=val("fImage");
+   t.champion=val("fChampion");
+   t.members=val("fMembers");
+   t.status=val("fStatus");
+
+   if(await saveTitle(t)){
+    selected=t.id;
+    closeModal();
+    render();
+   }
+  }
+ );
+}
+
 function editPrestige(){
-let t=current();
-openModal("Adjust Championship Prestige",
-`<p>Rate the championship itself, not its champion. Changes are manual.</p>
-<label>Current prestige (0–5, half-star increments)</label>
-<select id="fRating">${Array.from({length:11},(_,i)=>i*.5).map(n=>`<option value="${n}" ${n===Number(t.prestige)?"selected":""}>${n.toFixed(1)} stars</option>`).join("")}</select>
-${field("Reason for change (optional)","fReason")}
-${field("Event (optional)","fEvent")}`,
-()=>{
-let old=Number(t.prestige),next=Number(val("fRating"));
-t.prestige=next;
-if(next!==old)t.log.unshift({id:uid(),event:val("fEvent"),type:"Prestige Change",description:val("fReason")||`Prestige changed from ${old} to ${next} stars`,people:"",rating:next});
-closeModal();save();
-});
+ const t=copyCurrent();
+
+ const ratings=Array.from(
+  {length:11},(_,i)=>i*.5
+ );
+
+ openModal("Adjust Championship Prestige",
+  `<p>This rating belongs to the championship,
+  not the current champion.</p>
+  <label>Prestige Rating</label>
+  <select id="fRating">
+   ${ratings.map(n=>`
+    <option value="${n}"
+     ${n===num(t.prestige)?"selected":""}>
+     ${n.toFixed(1)} / 5 stars
+    </option>
+   `).join("")}
+  </select>`+
+  field("Reason for Change","fReason")+
+  field("Event / Show (optional)","fEvent"),
+  async()=>{
+   const old=num(t.prestige);
+   const next=num(val("fRating"));
+
+   if(next===old){
+    closeModal();return;
+   }
+
+   const entry={
+    id:uid(),
+    event:val("fEvent"),
+    type:"Prestige Change",
+    description:val("fReason")||
+     `Prestige changed from ${old} to ${next} stars`,
+    people:"",
+    rating:next,
+    previousRating:old
+   };
+
+   t.prestige=next;
+   t.log.unshift(entry);
+   t.prestigeHistory.push({
+    id:entry.id,
+    rating:next,
+    previousRating:old,
+    event:entry.event,
+    reason:entry.description
+   });
+
+   if(await saveTitle(t))closeModal();
+  }
+ );
 }
+
 function editReign(id){
-let t=current(),r=t.reigns.find(x=>x.id===id),adding=!r;
-openModal(adding?"Add Championship Reign":"Edit Championship Reign",
-field("Champion / Team","fName",r?.name)+field("Team Members (if applicable)","fMembers",r?.members)+
-field("Successful Defenses","fDef",r?.defenses??0,"number")+
-field("Event Won (PPV or Engage)","fEvent",r?.event)+
-field("Months Held (decimals allowed)","fMonths",r?.months??0,"number")+
-field("Match Type Won","fType",r?.type)+field("Notes","fNotes",r?.notes)+
-(adding?"<p class='small'>New reigns are added after existing reigns.</p>":""),
-()=>{
-if(!val("fName"))return alert("Enter the champion or team.");
-if(!r){r={id:uid()};t.reigns.push(r)}
-Object.assign(r,{name:val("fName"),members:val("fMembers"),defenses:Math.max(0,Number(val("fDef"))||0),event:val("fEvent"),months:Math.max(0,Number(val("fMonths"))||0),type:val("fType"),notes:val("fNotes")});
-if(adding){t.champion=r.name;t.status="Active"}
-closeModal();save();
-});
-$("fMonths").step="0.5";$("fMonths").min="0";$("fDef").min="0";
+ const t=copyCurrent();
+ let r=t.reigns.find(x=>x.id===id);
+ const adding=!r;
+
+ if(!r){
+  r={
+   id:uid(),name:"",members:"",
+   defenses:0,event:"",months:0,type:"",notes:""
+  };
+ }
+
+ openModal(
+  adding?"Add Championship Reign":"Edit Championship Reign",
+  field("Champion / Team","fName",r.name)+
+  field("Team Members","fMembers",r.members)+
+  field("Successful Defenses","fDef",r.defenses,"number")+
+  field("Event Won","fEvent",r.event)+
+  field("Months Held (decimals allowed)","fMonths",
+   r.months,"number")+
+  field("Match Type Won","fType",r.type)+
+  field("Notes","fNotes",r.notes),
+  async()=>{
+   if(!val("fName")){
+    alert("Enter the champion or team.");return;
+   }
+
+   const d=Number(val("fDef"));
+   const m=Number(val("fMonths"));
+
+   if(!Number.isInteger(d)||d<0||
+      !Number.isFinite(m)||m<0){
+    alert("Enter valid defenses and months.");return;
+   }
+
+   Object.assign(r,{
+    name:val("fName"),
+    members:val("fMembers"),
+    defenses:d,
+    event:val("fEvent"),
+    months:m,
+    type:val("fType"),
+    notes:val("fNotes")
+   });
+
+   if(adding){
+    t.reigns.push(r);
+    t.champion=r.name;
+    t.members=r.members;
+    t.status="Active";
+   }
+
+   if(await saveTitle(t))closeModal();
+  }
+ );
+
+ $("fDef").min="0";
+ $("fDef").step="1";
+ $("fMonths").min="0";
+ $("fMonths").step="any";
 }
+
 function editMatch(id){
-let t=current(),m=t.matches.find(x=>x.id===id);
-openModal(m?"Edit Title Match":"Add Title Match",
-field("Event","fEvent",m?.event)+field("Participants / Opponents","fPeople",m?.participants)+
-field("Champion Entering","fEntering",m?.entering)+field("Match Type","fType",m?.type)+
-field("Winner","fWinner",m?.winner)+
-choice("Outcome","fOutcome",["Retained","Title Changed","Vacant Title Won","Other"],m?.outcome||"Retained")+
-field("Notes","fNotes",m?.notes),
-()=>{
-if(!m){m={id:uid()};t.matches.push(m)}
-Object.assign(m,{event:val("fEvent"),participants:val("fPeople"),entering:val("fEntering"),type:val("fType"),winner:val("fWinner"),outcome:val("fOutcome"),notes:val("fNotes")});
-closeModal();save();
-});
+ const t=copyCurrent();
+ let m=t.matches.find(x=>x.id===id);
+
+ if(!m){
+  m={
+   id:uid(),event:"",participants:"",
+   entering:"",type:"",winner:"",
+   outcome:"Retained",notes:""
+  };
+  t.matches.push(m);
+ }
+
+ openModal(id?"Edit Title Match":"Add Title Match",
+  field("Event / Show","fEvent",m.event)+
+  field("Participants / Opponents","fPeople",m.participants)+
+  field("Champion Entering","fEntering",m.entering)+
+  field("Match Type","fType",m.type)+
+  field("Winner","fWinner",m.winner)+
+  choice("Outcome","fOutcome",
+   ["Retained","Title Changed","Vacant Title Won","Other"],
+   m.outcome)+
+  field("Notes","fNotes",m.notes),
+  async()=>{
+   Object.assign(m,{
+    event:val("fEvent"),
+    participants:val("fPeople"),
+    entering:val("fEntering"),
+    type:val("fType"),
+    winner:val("fWinner"),
+    outcome:val("fOutcome"),
+    notes:val("fNotes")
+   });
+   if(await saveTitle(t))closeModal();
+  }
+ );
 }
+
 function editLog(id){
-let t=current(),e=t.log.find(x=>x.id===id);
-openModal(e?"Edit Event Log":"Add Championship Event",
-field("Event / Show","fEvent",e?.event)+
-choice("Event Type","fType",["Promo","Confrontation","Title Defense","Title Change","Vacancy","Tournament","Injury","Prestige Change","Other"],e?.type||"Promo")+
-field("Involved Wrestlers","fPeople",e?.people)+
-`<label>Description</label><textarea id="fDesc">${esc(e?.description||"")}</textarea>`,
-()=>{
-if(!e){e={id:uid(),rating:null};t.log.unshift(e)}
-Object.assign(e,{event:val("fEvent"),type:val("fType"),people:val("fPeople"),description:val("fDesc")});
-closeModal();save();
-});
+ const t=copyCurrent();
+ let e=t.log.find(x=>x.id===id);
+
+ if(!e){
+  e={
+   id:uid(),event:"",type:"Promo",
+   people:"",description:""
+  };
+  t.log.unshift(e);
+ }
+
+ openModal(id?"Edit Event Log":"Add Championship Event",
+  field("Event / Show","fEvent",e.event)+
+  choice("Event Type","fType",[
+   "Promo","Confrontation","Title Defense",
+   "Title Change","Vacancy","Tournament",
+   "Injury","Prestige Change","Other"
+  ],e.type)+
+  field("Involved Wrestlers","fPeople",e.people)+
+  `<label>Description</label>
+   <textarea id="fDesc">${esc(e.description)}</textarea>`,
+  async()=>{
+   Object.assign(e,{
+    event:val("fEvent"),
+    type:val("fType"),
+    people:val("fPeople"),
+    description:val("fDesc")
+   });
+   if(await saveTitle(t))closeModal();
+  }
+ );
 }
+
 function editNotes(){
-let t=current();
-openModal("Championship Notes",`<textarea id="fNotes">${esc(t.notes)}</textarea>`,()=>{
-t.notes=val("fNotes");closeModal();save();
-});
+ const t=copyCurrent();
+
+ openModal("Championship Notes",
+  `<textarea id="fNotes">${esc(t.notes)}</textarea>`,
+  async()=>{
+   t.notes=val("fNotes");
+   if(await saveTitle(t))closeModal();
+  }
+ );
 }
-render();
+
+$("cancelBtn").onclick=closeModal;
+$("addTitle").onclick=()=>editTitle(true);
+
+$("loginBtn").onclick=async()=>{
+ const email=val("email");
+ const password=val("password");
+
+ if(!email||!password){
+  alert("Enter your email and password.");return;
+ }
+
+ try{
+  await signInWithEmailAndPassword(auth,email,password);
+  $("password").value="";
+ }catch(e){
+  alert("Sign-in failed: "+e.message);
+ }
+};
+
+$("logoutBtn").onclick=()=>signOut(auth);
+
+document.addEventListener("click",e=>{
+ const select=e.target.closest("[data-select]");
+ if(select){
+  selected=select.dataset.select;
+  tab="lineage";
+  render();return;
+ }
+
+ const tabButton=e.target.closest("[data-tab]");
+ if(tabButton){
+  tab=tabButton.dataset.tab;
+  render();return;
+ }
+
+ if(!admin)return;
+
+ const action=e.target.closest("[data-action]");
+ if(action){
+  const a=action.dataset.action;
+  if(a==="title")editTitle();
+  if(a==="prestige")editPrestige();
+  if(a==="reign")editReign();
+  if(a==="match")editMatch();
+  if(a==="log")editLog();
+  if(a==="notes")editNotes();
+  return;
+ }
+
+ const reign=e.target.closest("[data-edit-reign]");
+ if(reign){editReign(reign.dataset.editReign);return}
+
+ const match=e.target.closest("[data-edit-match]");
+ if(match){editMatch(match.dataset.editMatch);return}
+
+ const log=e.target.closest("[data-edit-log]");
+ if(log){editLog(log.dataset.editLog);return}
+});
+
+onAuthStateChanged(auth,async user=>{
+ admin=false;
+ $("logoutBtn").hidden=!user;
+ $("loginArea").hidden=!!user;
+
+ if(user){
+  $("authStatus").textContent="Signed in — checking permissions";
+  try{
+   const profile=await getDoc(doc(db,"users",user.uid));
+   admin=profile.exists()
+    &&profile.data().active===true
+    &&profile.data().role==="admin";
+  }catch(e){
+   console.error(e);
+  }
+
+  $("authStatus").textContent=admin
+   ?"Signed in • MPW Admin"
+   :"Signed in • View Only";
+ }else{
+  $("authStatus").textContent=
+   "Public Viewing • Admin sign-in available";
+ }
+
+ render();
+});
+
+load();
 </script>
 </body>
 </html>

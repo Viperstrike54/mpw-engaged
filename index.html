@@ -26,21 +26,8 @@ const dateOf=p=>p.updatedAt?.toDate?.()||p.createdAt?.toDate?.()||new Date(0);
 const sorted=a=>[...a].sort((x,y)=>dateOf(y)-dateOf(x));
 function go(p,id=null){page=p;selectedId=id;searchTerm='';render();window.scrollTo(0,0)}
 function flash(msg){notice=msg;render()}
-const addExternalNavLinks = () => {
-  const menu = document.getElementById('nav');
-  if (!menu) return;
 
-  [
-    ['📅 Event Hub', 'events.html'],
-    ['🏆 Championships', 'championships.html']
-  ].forEach(([label, url]) => {
-    const button = document.createElement('button');
-    button.textContent = label;
-    button.onclick = () => window.location.href = url;
-    menu.appendChild(button);
-  });
-};
-function nav(){ $('nav').innerHTML=sections.map((s,i)=>`<button class="${(i===0&&['home','news','promos','activity','article','event'].includes(page))||page===s?'active':''}" data-page="${esc(i===0?'home':s)}">${esc(s)}</button>`).join('');$('nav').querySelectorAll('button').forEach(b=>b.onclick=()=>go(b.dataset.page)); addExternalNavLinks();}
+function nav(){ $('nav').innerHTML=sections.map((s,i)=>`<button class="${(i===0&&['home','news','promos','activity','article','event'].includes(page))||page===s?'active':''}" data-page="${esc(i===0?'home':s)}">${esc(s)}</button>`).join('');$('nav').querySelectorAll('button').forEach(b=>b.onclick=()=>b.dataset.page==='Match Cards'?window.location.assign('events.html'):b.dataset.page==='Championship History'?window.location.assign('championships.html'):go(b.dataset.page)); }
 function staffNav(){ $('authbar').innerHTML='<span class="pill">SEASON 3</span>'+(me?`<span class="who">${esc(me.email)} · ${esc(role||'unassigned')}</span>${isStaff()?'<button class="button outline" id="deskBtn">EDITOR</button>':''}<button class="button outline" id="logoutBtn">LOG OUT</button>`:'<button class="button outline" id="loginBtn">STAFF LOGIN</button>');if($('loginBtn'))$('loginBtn').onclick=()=>go('login');if($('deskBtn'))$('deskBtn').onclick=()=>go('desk');if($('logoutBtn'))$('logoutBtn').onclick=async()=>{await signOut(auth);go('home')}; }
 function publicNews(){let list=posts.filter(p=>p.kind==='news');return list.length?sorted(list):[fallback]}
 function publicPromos(){return sorted(posts.filter(p=>p.kind==='promo'))}

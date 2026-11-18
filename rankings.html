@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0c0a10"><title>MPW ENGAGED | Rankings</title>
+<style>
+:root{--bg:#0c0a10;--panel:#191321;--plum:#281038;--gold:#c8a85b;--text:#f6f0f7;--muted:#bcb2c3;--border:#46364d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}header{background:linear-gradient(125deg,#120d18,#281038);border-bottom:2px solid var(--gold);padding:25px 20px;text-align:center;position:relative}h1{margin:0;color:var(--gold);letter-spacing:.1em}header p{margin:3px 0;color:var(--muted);letter-spacing:.14em;font-size:12px}a{color:var(--gold)}.back{display:inline-block;margin:12px 0 0;font-weight:700;text-decoration:none}.wrap{max-width:1100px;margin:auto;padding:20px 16px 65px}.panel{border:1px solid var(--border);border-radius:14px;background:var(--panel);padding:20px;margin:15px 0}h2{margin:0 0 8px;font-size:24px}p.sub{color:var(--muted);margin:0 0 18px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tabs button{background:#241b2c;border:1px solid var(--border);border-radius:9px;color:var(--text);padding:10px 15px;cursor:pointer;font-weight:650}.tabs button.active{background:var(--gold);color:#1b1020;border-color:var(--gold)}.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin:12px 0}input{background:#100e15;color:var(--text);border:1px solid var(--border);border-radius:9px;padding:11px 12px;min-width:220px;max-width:100%;font:inherit}.meta{color:var(--muted);font-size:13px}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:490px}th,td{padding:13px 10px;text-align:left;border-bottom:1px solid #34283c}th{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:.07em}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}td.rank{color:var(--gold);font-weight:800;width:55px}tr:hover td{background:#241a2c}.empty{padding:28px 8px;color:var(--muted);text-align:center}.notice{border-left:3px solid var(--gold);padding:10px 14px;background:#241c2b;color:var(--muted);font-size:13px;border-radius:4px}.notice strong{color:var(--text)}@media(min-width:700px){.back{position:absolute;right:25px;top:18px;margin:0}}@media(max-width:500px){h1{font-size:25px}.panel{padding:14px}h2{font-size:21px}input{width:100%}}
+</style></head><body><header><h1>MPW ENGAGED</h1><p>OFFICIAL RANKINGS</p><a class="back" href="index.html">â Main Website</a></header>
+<main class="wrap"><section class="panel"><h2 id="heading">All-Time MPW Rankings</h2><p class="sub" id="description">Combined results across all MPW seasons. Your main booking reference.</p><div class="tabs" role="group" aria-label="Select rankings period"><button class="active" data-season="all">All-Time</button><button data-season="3">Season 3</button><button data-season="2">Season 2</button><button data-season="1">Season 1</button></div><div class="tools"><input id="search" type="search" placeholder="Search wrestlersâ¦" aria-label="Search wrestlers"><span class="meta" id="count">Connecting to Firebaseâ¦</span></div><div class="scroll"><table><thead><tr><th>Rank</th><th>Wrestler</th><th class="num">W</th><th class="num">L</th><th class="num">D</th><th class="num">Matches</th></tr></thead><tbody id="standings"><tr><td colspan="6" class="empty">Loading rankingsâ¦</td></tr></tbody></table></div></section><div class="notice" id="status"><strong>Live database:</strong> Loading wrestler profiles and completed results. Matches without confirmed results are not counted.</div></main>
+<script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import {getFirestore,collection,getDocs,collectionGroup} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+const firebaseConfig={apiKey:'AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA',authDomain:'mpw-engaged.firebaseapp.com',projectId:'mpw-engaged',storageBucket:'mpw-engaged.firebasestorage.app',messagingSenderId:'133272625859',appId:'1:133272625859:web:d1e09eaf1b4613172a7876'};
+const db=getFirestore(initializeApp(firebaseConfig));
+const $=id=>document.getElementById(id);
+let wrestlers=[],results=[],season='all',resultError='';
+const nameOf=w=>String(w.ringName||w.name||w.wrestlerName||'Unnamed Wrestler').trim();
+const norm=s=>String(s||'').trim().toLowerCase();
+const getSeason=m=>{let s=m.season??m.seasonNumber??m.mpwSeason??null;if(s!==null&&s!==''){let n=String(s).match(/[1-9]\d*/);return n?Number(n[0]):null}return null};
+const confirmed=m=>m.completed===true||m.status==='completed'||m.status==='Completed'||m.resultConfirmed===true;
+function idList(value){if(!Array.isArray(value))return [];return value.map(x=>typeof x==='string'?x:(x?.wrestlerId||x?.id||x?.name||'')).filter(Boolean)}
+function participants(m){return idList(m.participantIds||m.wrestlerIds||m.participants||[])}
+function winners(m){return idList(m.winnerIds||m.winners||[]).concat(m.winnerId?[m.winnerId]:[])}
+function render(){
+$('heading').textContent=season==='all'?'All-Time MPW Rankings':`Season ${season} Rankings`;
+$('description').textContent=season==='all'?'Combined results across all MPW seasons. Your main booking reference.':`Only completed Season ${season} match results.`;
+document.querySelectorAll('[data-season]').forEach(b=>{b.classList.toggle('active',b.dataset.season===season);b.setAttribute('aria-pressed',String(b.dataset.season===season))});
+const map=new Map(wrestlers.map(w=>[w.id,{...w,wins:0,losses:0,draws:0}]));
+const names=new Map(wrestlers.map(w=>[norm(nameOf(w)),w.id]));
+const resolve=x=>map.has(String(x))?String(x):names.get(norm(x));
+let counted=0;
+for(const m of results){if(!confirmed(m))continue;let s=getSeason(m);if(season!=='all'&&s!==Number(season))continue;if(s===null)continue;
+const ps=[...new Set(participants(m).map(resolve).filter(Boolean))];const ws=[...new Set(winners(m).map(resolve).filter(Boolean))];
+if(!ps.length||!ws.length||ws.some(w=>!ps.includes(w)))continue;
+counted++;for(const id of ps){let r=map.get(id);if(ws.includes(id))r.wins++;else r.losses++}
+}
+const all=[...map.values()].sort((a,b)=>b.wins-a.wins||a.losses-b.losses||b.draws-a.draws||nameOf(a).localeCompare(nameOf(b)));
+let previous='',rank=0;all.forEach((w,i)=>{const key=`${w.wins}|${w.losses}|${w.draws}`;if(key!==previous){rank=i+1;previous=key}w.rank=rank});
+const term=norm($('search').value);const filtered=all.filter(w=>norm(nameOf(w)).includes(term));
+$('count').textContent=`${filtered.length} wrestlers Â· ${counted} counted matches`;
+const tbody=$('standings');tbody.replaceChildren();if(!filtered.length){let tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=6;td.className='empty';td.textContent='No matching wrestlers.';tr.append(td);tbody.append(tr)}
+for(const w of filtered){const tr=document.createElement('tr');const vals=[`#${w.rank}`,nameOf(w),w.wins,w.losses,w.draws,w.wins+w.losses+w.draws];vals.forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i===0)td.className='rank';if(i>=2)td.className='num';tr.append(td)});tbody.append(tr)}
+$('status').innerHTML='';const strong=document.createElement('strong');strong.textContent='Data status: ';$('status').append(strong,document.createTextNode(resultError?`Roster loaded. Match results unavailable (${resultError}); rankings currently show zeros. Existing historical records have not been imported.`:counted?`${counted} completed, season-tagged matches counted. Historical results must be imported to include earlier seasons.`:'Roster connected. No compatible completed, season-tagged match results found yet. Existing historical records have not been imported.'));
+}
+async function load(){try{const snap=await getDocs(collection(db,'wrestlers'));wrestlers=snap.docs.map(d=>({id:d.id,...d.data()}));}catch(e){$('count').textContent='Unable to load roster';$('standings').innerHTML='<tr><td colspan="6" class="empty">Could not read the roster. Check Firebase permissions.</td></tr>';return}
+try{const snap=await getDocs(collectionGroup(db,'matches'));results=snap.docs.map(d=>d.data())}catch(e){resultError=e.code||e.message||'permission/index error';results=[]}render()}
+document.querySelectorAll('[data-season]').forEach(b=>b.addEventListener('click',()=>{season=b.dataset.season;render()}));$('search').addEventListener('input',render);load();
+</script></body></html>

@@ -18,7 +18,7 @@ import {getFirestore,collection,getDocs,query,where} from 'https://www.gstatic.c
 const firebaseConfig={apiKey:'AIzaSyB44fs1SVXQ0qEubJKO5OPM2b-5l_c0ViA',authDomain:'mpw-engaged.firebaseapp.com',projectId:'mpw-engaged',storageBucket:'mpw-engaged.firebasestorage.app',messagingSenderId:'133272625859',appId:'1:133272625859:web:d1e09eaf1b4613172a7876'};
 const db=getFirestore(initializeApp(firebaseConfig));
 const $=id=>document.getElementById(id);
-let wrestlers=[],results=[],season='all',resultError='';
+let wrestlers=[],results=[],season='all',division='overall',resultError='';
 const nameOf=w=>String(w.ringName||w.name||w.wrestlerName||'Unnamed Wrestler').trim();
 const norm=s=>String(s||'').trim().toLowerCase();
 const getSeason=m=>{let s=m.season??m.seasonNumber??m.mpwSeason??null;if(s!==null&&s!==''){let n=String(s).match(/[1-9]\d*/);return n?Number(n[0]):null}return null};
@@ -41,7 +41,22 @@ counted++;for(const id of ps){let r=map.get(id);if(ws.includes(id))r.wins++;else
 }
 const all=[...map.values()].sort((a,b)=>b.wins-a.wins||a.losses-b.losses||b.draws-a.draws||nameOf(a).localeCompare(nameOf(b)));
 let previous='',rank=0;all.forEach((w,i)=>{const key=`${w.wins}|${w.losses}|${w.draws}`;if(key!==previous){rank=i+1;previous=key}w.rank=rank});
-const term=norm($('search').value);const filtered=all.filter(w=>norm(nameOf(w)).includes(term));
+const term=norm($('search').value);
+
+const filtered=all.filter(w=>{
+  const matchesSearch=norm(nameOf(w)).includes(term);
+  const type=norm(w.division||w.category||'singles');
+
+  let matchesDivision=true;
+
+  if(division==='singles') matchesDivision=type==='singles';
+  if(division==='heavyweight') matchesDivision=type==='heavyweight';
+  if(division==='women') matchesDivision=type==='women'||type==='womens';
+  if(division==='tag') matchesDivision=type==='tag'||type==='tag team'||type==='tag teams';
+  if(division==='trios') matchesDivision=type==='trios'||type==='trio';
+
+  return matchesSearch&&matchesDivision;
+});
 $('count').textContent=`${filtered.length} wrestlers Â· ${counted} counted matches`;
 const tbody=$('standings');tbody.replaceChildren();if(!filtered.length){let tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=6;td.className='empty';td.textContent='No matching wrestlers.';tr.append(td);tbody.append(tr)}
 for(const w of filtered){const tr=document.createElement('tr');const vals=[`#${w.rank}`,nameOf(w),w.wins,w.losses,w.draws,w.wins+w.losses+w.draws];vals.forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i===0)td.className='rank';if(i>=2)td.className='num';tr.append(td)});tbody.append(tr)}
@@ -72,5 +87,14 @@ try {
 }
 render();
 }
+document.querySelectorAll('[data-division]').forEach(button => {
+  button.addEventListener('click', () => {
+    division = button.dataset.division;
+    document.querySelectorAll('[data-division]').forEach(b => {
+      b.classList.toggle('active', b === button);
+    });
+    render();
+  });
+});
 document.querySelectorAll('[data-season]').forEach(b=>b.addEventListener('click',()=>{season=b.dataset.season;render()}));$('search').addEventListener('input',render);load();
 </script></body></html>

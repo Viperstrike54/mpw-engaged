@@ -49,9 +49,9 @@ const rosterStatuses=['Active','Injured','Inactive','Retired','Legend','Alumni',
 const rosterFields=['name','ringName','division','isHeavyweight','isWomensDivision','status','statusReason','imageUrl','hometown','height','weight','debut','aliases','teams','factions','finisher','bio','achievements'];
 function rosterPublic(){return wrestlers.filter(w=>isAdmin()||(w.visibility==='public'&&w.published===true)).sort((a,b)=>(a.ringName||a.name||'').localeCompare(b.ringName||b.name||''))}
 function roster(){let all=rosterPublic(),divisions=['All',...new Set(all.map(w=>w.division||'Unassigned'))],filtered=all.filter(w=>(rosterDivision==='All'||(w.division||'Unassigned')===rosterDivision)&&[w.name,w.ringName,w.aliases,w.teams,w.factions].join(' ').toLowerCase().includes(rosterQuery.toLowerCase()));return `<div class="article"><div class="eyebrow">THE SUPERSTARS OF MANTRA PRO WRESTLING</div><h1>MPW ROSTER</h1><div class="roster-tabs">
-<button class="button" data-roster-tab="superstars">SUPERSTARS</button>
-<button class="button outline" data-roster-tab="tag">TAG TEAMS</button>
-<button class="button outline" data-roster-tab="trios">TRIOS</button>
+<button class="button ${rosterTab==='superstars'?'':'outline'}" data-roster-tab="superstars">SUPERSTARS</button>
+<button class="button ${rosterTab==='tag'?'':'outline'}" data-roster-tab="tag">TAG TEAMS</button>
+<button class="button ${rosterTab==='trios'?'':'outline'}" data-roster-tab="trios">TRIOS</button>
 </div>${rosterTab==='tag'
 ? '<div class="panel"><h2>TAG TEAMS</h2><p>Established tag team directory coming soon.</p></div>'
 : rosterTab==='trios'

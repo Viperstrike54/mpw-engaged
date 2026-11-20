@@ -53,7 +53,7 @@ function roster(){let all=rosterPublic(),divisions=['All',...new Set(all.map(w=>
 <button class="button ${rosterTab==='tag'?'':'outline'}" data-roster-tab="tag">TAG TEAMS</button>
 <button class="button ${rosterTab==='trios'?'':'outline'}" data-roster-tab="trios">TRIOS</button>
 </div>${rosterTab==='tag'
-? '<div class="panel"><h2>TAG TEAMS</h2><p>Established tag team directory coming soon.</p></div>'
+? `<div class="panel"><h2>TAG TEAMS</h2>${isAdmin()?'<button class="button" id="rosterAddTeam">+ ADD TAG TEAM</button>':''}<p>Established tag team directory coming soon.</p></div>`
 : rosterTab==='trios'
 ? '<div class="panel"><h2>TRIOS</h2><p>Established trios directory coming soon.</p></div>'
 : `<p class="muted">Explore the official roster and superstar profiles.</p>${isAdmin()?'<button class="button" id="rosterAdd">+ ADD SUPERSTAR</button>':''}${rosterError?`<p class="status error">${esc(rosterError)}</p>`:''}<div class="roster-tools"><input id="rosterSearch" aria-label="Search wrestlers" placeholder="Search superstars…" value="${esc(rosterQuery)}"><select id="rosterDivision" aria-label="Filter division">${divisions.map(d=>`<option ${d===rosterDivision?'selected':''}>${esc(d)}</option>`).join('')}</select></div><div id="rosterCards" class="roster-grid">${rosterCards(filtered)}</div></div>`}`}
@@ -62,14 +62,137 @@ function rosterProfile(){let w=wrestlers.find(x=>x.id===selectedId&&(isAdmin()||
 function rosterEditor(){if(!isAdmin())return '<div class="empty">Administrator access required.</div>';let w=wrestlers.find(x=>x.id===rosterEditId)||{};let input=(key,title,wide=false)=>`<label class="${wide?'wide':''}">${title}<input name="${key}" value="${esc(w[key]||'')}"></label>`;return `<div class="article"><button class="link" data-page="Roster">← ROSTER</button><h1>${rosterEditId?'Edit Superstar':'Add Superstar'}</h1><p class="muted">Only published profiles appear publicly. IDs remain stable when ring names change.</p><form id="rosterForm" class="roster-form panel editor">${input('ringName','Ring name *')}${input('name','Full / alternate name')}${input('division','Division')}
 <label><input type="checkbox" name="isHeavyweight" value="true" ${w.isHeavyweight==='true'?'checked':''}> Heavyweight</label>
 <label><input type="checkbox" name="isWomensDivision" value="true" ${w.isWomensDivision==='true'?'checked':''}> Women's Division</label>${`<label>Status<select name="status">${[...new Set([...rosterStatuses,w.status].filter(Boolean))].map(x=>`<option ${x===(w.status||'Active')?'selected':''}>${esc(x)}</option>`).join('')}</select></label>`}${input('statusReason','Status reason')}${input('imageUrl','Photo URL',true)}${input('hometown','Hometown')}${input('height','Height')}${input('weight','Weight')}${input('debut','Debut')}${input('aliases','Past ring names (comma-separated)',true)}${input('teams','Tag teams')}${input('factions','Factions')}${input('finisher','Finishing move')}${input('achievements','Achievements',true)}<label class="wide">Biography<textarea name="bio" rows="6">${esc(w.bio||'')}</textarea></label><label>Visibility<select name="visibility"><option value="public" ${w.visibility!=='hidden'?'selected':''}>Public</option><option value="hidden" ${w.visibility==='hidden'?'selected':''}>Hidden</option></select></label><label>Publishing<select name="published"><option value="true" ${w.published!==false?'selected':''}>Published</option><option value="false" ${w.published===false?'selected':''}>Draft</option></select></label><div class="wide actions"><button class="button" type="submit">SAVE SUPERSTAR</button><span class="status" id="rosterSaveStatus"></span></div></form></div>`}
+function teamEditor(){
+  if(!isAdmin()) return '<div class="empty">Administrator access required.</div>';
+
+  return `
+    <div class="article">
+      <button class="link" data-page="Roster">← BACK TO ROSTER</button>
+      <h1>CREATE TAG TEAM</h1>
+      <p class="muted">Create an established MPW tag team using wrestlers from your roster.</p>
+
+      <form id="teamForm" class="formgrid panel editor">
+        <label class="wide">
+          Team Name *
+          <input name="teamName" required placeholder="Enter team name">
+        </label>
+
+        <label>
+          Team Status
+          <select name="teamStatus">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Disbanded">Disbanded</option>
+          </select>
+        </label>
+<div class="wide">
+  <h3>TEAM MEMBERS</h3>
+  <p class="muted">Select two wrestlers from your MPW Roster.</p>
+
+  <label>
+    Wrestler 1
+    <select name="member1" required>
+      <option value="">Select a wrestler</option>
+      ${rosterPublic().map(w=>`
+        <option value="${esc(w.id)}">${esc(w.ringName||w.name)}</option>
+      `).join('')}
+    </select>
+  </label>
+
+  <label>
+    Wrestler 2
+    <select name="member2" required>
+      <option value="">Select a wrestler</option>
+      ${rosterPublic().map(w=>`
+        <option value="${esc(w.id)}">${esc(w.ringName||w.name)}</option>
+      `).join('')}
+    </select>
+  </label>
+</div>
+        <div class="wide actions">
+          <button class="button" type="submit">SAVE TAG TEAM</button>
+          <span class="status" id="teamSaveStatus"></span>
+        </div>
+      </form>
+    </div>
+  `;
+}
+
+async function saveTeam(e){
+  e.preventDefault();
+  if(!isAdmin()) return;
+
+  const data = new FormData(e.target);
+  const teamName = String(data.get('teamName') || '').trim();
+  const teamStatus = String(data.get('teamStatus') || 'Active');
+  const member1 = data.get('member1');
+  const member2 = data.get('member2');
+  const status = $('teamSaveStatus');
+
+  if(!teamName || !member1 || !member2 || member1 === member2){
+    status.textContent = 'Enter a team name and select two different roster members.';
+    return;
+  }
+
+  const validIds = new Set(wrestlers.map(w => w.id));
+  if(!validIds.has(member1) || !validIds.has(member2)){
+    status.textContent = 'Please select members from the MPW Roster.';
+    return;
+  }
+
+  const button = e.target.querySelector('[type="submit"]');
+  button.disabled = true;
+  status.textContent = 'Saving team...';
+
+  try {
+    await addDoc(collection(db, 'teams'), {
+      name: teamName,
+      type: 'tag',
+      status: teamStatus,
+      memberIds: [member1, member2],
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+
+    status.textContent = 'Tag Team saved successfully!';
+    e.target.reset();
+  } catch(err) {
+    status.textContent = 'Could not save team: ' + niceError(err);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+  e.preventDefault();
+
+  const data = new FormData(e.target);
+  const member1 = data.get('member1');
+  const member2 = data.get('member2');
+
+  if(!member1 || !member2 || member1 === member2){
+    $('teamSaveStatus').textContent =
+      'Please select two different roster members.';
+    return;
+  }
+
+  $('teamSaveStatus').textContent =
+    'Team validation passed. Firebase saving comes next.';
+}
 function bindRoster(){
+  if($('teamForm')){
+  $('teamForm').onsubmit=saveTeam;
+}
 document.querySelectorAll('[data-roster-tab]').forEach(button=>{
   button.onclick=()=>{
     rosterTab=button.dataset.rosterTab;
     go('Roster');
   };
 });
-if($('rosterAdd'))$('rosterAdd').onclick=()=>{rosterEditId=null;go('rosterEditor')};if($('rosterEdit'))$('rosterEdit').onclick=()=>{rosterEditId=selectedId;go('rosterEditor')};if($('rosterSearch'))$('rosterSearch').oninput=e=>{rosterQuery=e.target.value;refreshRosterCards()};if($('rosterDivision'))$('rosterDivision').onchange=e=>{rosterDivision=e.target.value;refreshRosterCards()};bindRosterCards();if($('rosterForm'))$('rosterForm').onsubmit=saveWrestler}
+if($('rosterAddTeam')){
+  $('rosterAddTeam').onclick=()=>{
+    go('teamEditor');
+  };
+}if($('rosterAdd'))$('rosterAdd').onclick=()=>{rosterEditId=null;go('rosterEditor')};if($('rosterEdit'))$('rosterEdit').onclick=()=>{rosterEditId=selectedId;go('rosterEditor')};if($('rosterSearch'))$('rosterSearch').oninput=e=>{rosterQuery=e.target.value;refreshRosterCards()};if($('rosterDivision'))$('rosterDivision').onchange=e=>{rosterDivision=e.target.value;refreshRosterCards()};bindRosterCards();if($('rosterForm'))$('rosterForm').onsubmit=saveWrestler}
 function refreshRosterCards(){let a=rosterPublic().filter(w=>(rosterDivision==='All'||(w.division||'Unassigned')===rosterDivision)&&[w.name,w.ringName,w.aliases,w.teams,w.factions].join(' ').toLowerCase().includes(rosterQuery.toLowerCase()));$('rosterCards').innerHTML=rosterCards(a);bindRosterCards()}
 function bindRosterCards(){document.querySelectorAll('[data-wrestler]').forEach(el=>el.onclick=()=>go('rosterProfile',el.dataset.wrestler))}
 async function saveWrestler(e){e.preventDefault();if(!isAdmin())return;let d=new FormData(e.target),payload={};for(let k of rosterFields)payload[k]=String(d.get(k)||'').trim();if(!payload.ringName){$('rosterSaveStatus').textContent='Ring name is required.';return}payload.visibility=d.get('visibility');payload.published=d.get('published')==='true';payload.updatedAt=serverTimestamp();let btn=e.target.querySelector('[type=submit]');btn.disabled=true;try{if(rosterEditId)await updateDoc(doc(db,'wrestlers',rosterEditId),payload);else{payload.createdAt=serverTimestamp();await addDoc(collection(db,'wrestlers'),payload)}rosterEditId=null;go('Roster');flash('Superstar saved successfully.')}catch(err){$('rosterSaveStatus').textContent=niceError(err);btn.disabled=false}}
@@ -87,7 +210,7 @@ function listenRoster(){
   })
 }
 
-function render(){nav();staffNav();let html=page==='home'?home():page==='event'?event():page==='news'||page==='promos'?archive(page):page==='article'?article():page==='login'?login():page==='desk'?desk():page==='editor'?editor():page==='Roster'?roster():page==='rosterProfile'?rosterProfile():page==='rosterEditor'?rosterEditor():page==='activity'?'<div class="article"><button class="link" data-page="home">← BACK TO HOME</button><h1>Happening Now</h1><div class="empty">No official activity updates have been published yet.</div></div>':`<div class="coming"><div class="eyebrow">MPW ENGAGED</div><h1>${esc(page)}</h1><p class="muted">COMING SOON · Planned for a future update</p><button class="button outline" data-page="home">RETURN HOME</button></div>`;$('app').innerHTML=(notice?`<div class="admin-note" style="margin-bottom:15px">${esc(notice)}</div>`:'')+html;notice='';$('app').querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));$('app').querySelectorAll('[data-article]').forEach(b=>b.onclick=()=>go('article',b.dataset.article));if($('hero'))$('hero').onclick=()=>go('event');if($('eventBtn'))$('eventBtn').onclick=()=>go('event');if($('search'))$('search').oninput=e=>{searchTerm=e.target.value;$('results').innerHTML=archiveResults(page==='news'?publicNews():publicPromos());bindArticles()};bindArticles();bindRoster();if($('loginForm'))$('loginForm').onsubmit=async e=>{e.preventDefault();let d=new FormData(e.target);try{await signInWithEmailAndPassword(auth,d.get('email'),d.get('password'));go('desk')}catch(err){$('loginError').textContent=niceError(err)}};if($('newPost'))$('newPost').onclick=()=>{editId=null;go('editor')};$('app').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{editId=b.dataset.edit;go('editor')});$('app').querySelectorAll('[data-approve]').forEach(b=>b.onclick=()=>approve(b.dataset.approve));$('app').querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>removePost(b.dataset.delete));if($('editorForm')){ $('editorForm').onsubmit=e=>{e.preventDefault();savePost(false)};if($('publishNow'))$('publishNow').onclick=()=>savePost(true)} }
+function render(){nav();staffNav();let html=page==='home'?home():page==='event'?event():page==='news'||page==='promos'?archive(page):page==='article'?article():page==='login'?login():page==='desk'?desk():page==='editor'?editor():page==='Roster'?roster():page==='rosterProfile'?rosterProfile():page==='rosterEditor'?rosterEditor():page==='teamEditor'?teamEditor():page==='activity'?'<div class="article"><button class="link" data-page="home">← BACK TO HOME</button><h1>Happening Now</h1><div class="empty">No official activity updates have been published yet.</div></div>':`<div class="coming"><div class="eyebrow">MPW ENGAGED</div><h1>${esc(page)}</h1><p class="muted">COMING SOON · Planned for a future update</p><button class="button outline" data-page="home">RETURN HOME</button></div>`;$('app').innerHTML=(notice?`<div class="admin-note" style="margin-bottom:15px">${esc(notice)}</div>`:'')+html;notice='';$('app').querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));$('app').querySelectorAll('[data-article]').forEach(b=>b.onclick=()=>go('article',b.dataset.article));if($('hero'))$('hero').onclick=()=>go('event');if($('eventBtn'))$('eventBtn').onclick=()=>go('event');if($('search'))$('search').oninput=e=>{searchTerm=e.target.value;$('results').innerHTML=archiveResults(page==='news'?publicNews():publicPromos());bindArticles()};bindArticles();bindRoster();if($('loginForm'))$('loginForm').onsubmit=async e=>{e.preventDefault();let d=new FormData(e.target);try{await signInWithEmailAndPassword(auth,d.get('email'),d.get('password'));go('desk')}catch(err){$('loginError').textContent=niceError(err)}};if($('newPost'))$('newPost').onclick=()=>{editId=null;go('editor')};$('app').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{editId=b.dataset.edit;go('editor')});$('app').querySelectorAll('[data-approve]').forEach(b=>b.onclick=()=>approve(b.dataset.approve));$('app').querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>removePost(b.dataset.delete));if($('editorForm')){ $('editorForm').onsubmit=e=>{e.preventDefault();savePost(false)};if($('publishNow'))$('publishNow').onclick=()=>savePost(true)} }
 function bindArticles(){$('app').querySelectorAll('[data-article]').forEach(b=>b.onclick=()=>go('article',b.dataset.article))}
 async function savePost(publish){let f=$('editorForm');if(!f.reportValidity())return;let d=new FormData(f),payload={kind:d.get('kind'),title:d.get('title').trim(),category:d.get('category').trim(),wrestler:d.get('wrestler').trim(),imageUrl:d.get('imageUrl').trim(),body:d.get('body').trim(),updatedAt:serverTimestamp()};if(!payload.title||!payload.body)return;if(!isAdmin()&&publish)return;payload.status=publish?'published':'draft';try{if(editId){let p=[...posts,...myDrafts,...allPending].find(x=>x.id===editId);if(!p)throw Error('Post not found.');if(!isAdmin()&&(p.authorUid!==me.uid||p.status!=='draft'))throw Error('You may edit only your own drafts.');await updateDoc(doc(db,'content',editId),payload)}else{payload.authorUid=me.uid;payload.createdAt=serverTimestamp();await addDoc(collection(db,'content'),payload)}editId=null;go('desk');flash(publish?'Post published successfully.':'Draft saved.')}catch(e){$('editorStatus').textContent=niceError(e);$('editorStatus').classList.add('error')}}
 async function approve(id){if(!isAdmin())return;let p=allPending.find(x=>x.id===id);if(!p)return;try{await updateDoc(doc(db,'content',id),{status:'published',updatedAt:serverTimestamp()});flash('Post approved and published.')}catch(e){flash('Unable to approve: '+niceError(e))}}
